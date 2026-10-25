@@ -1,7 +1,7 @@
 # DevicePulse — Documento 01: Visão e Escopo do MVP
 
-**Versão:** 0.1  
-**Situação:** Rascunho para revisão  
+**Versão:** 1.0  
+**Situação:** Aprovado — escopo inicial  
 **Projeto:** DevicePulse  
 **Tipo:** Aplicação web Full Stack com dados simulados
 
@@ -160,6 +160,6 @@ Consideraremos a primeira versão funcional quando for possível:
 
 ---
 
-**Próximo passo:** revisar este documento, resolver ambiguidades e aprovar o escopo antes de detalhar requisitos e processos.
+**Próximo passo:** detalhar os usuários, a jornada e os casos de uso no DP-002. As regras ainda preliminares serão definidas em DP-004.
 
 *Este projeto é independente e não representa produtos, sistemas ou dados internos de empresas de monitoramento.*
