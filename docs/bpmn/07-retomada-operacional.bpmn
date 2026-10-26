@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_DP007_Recovery" targetNamespace="https://github.com/agiovannamendes/devicepulse/bpmn" exporter="DevicePulse" exporterVersion="1.0">
+  <bpmn:error id="Error_REC" name="Falha no banco" errorCode="DATABASE_ERROR"/>
+  <bpmn:collaboration id="Collaboration_DP007"><bpmn:participant id="Participant_DevicePulse_DP007" name="DevicePulse — verificador e retomada" processRef="Process_DP007_Recovery"/></bpmn:collaboration>
+  <bpmn:process id="Process_DP007_Recovery" name="Retomada após indisponibilidade" isExecutable="false">
+    <bpmn:startEvent id="Start_Reavaliacao" name="Rotina de retomada iniciada"><bpmn:outgoing>Flow_REC_01</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:serviceTask id="Task_ConsultarBanco" name="Verificar conexão com banco"><bpmn:incoming>Flow_REC_01</bpmn:incoming><bpmn:outgoing>Flow_REC_02</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_BancoDisponivel" name="Banco disponível?"><bpmn:incoming>Flow_REC_02</bpmn:incoming><bpmn:outgoing>Flow_REC_03</bpmn:outgoing><bpmn:outgoing>Flow_REC_05</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:task id="Task_RegistrarIndisponivel" name="Registrar indisponibilidade e aguardar ciclo"><bpmn:incoming>Flow_REC_03</bpmn:incoming><bpmn:outgoing>Flow_REC_04</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_SemBanco" name="Nenhuma alteração"><bpmn:incoming>Flow_REC_04</bpmn:incoming></bpmn:endEvent>
+    <bpmn:serviceTask id="Task_Carregar" name="Carregar dispositivos e alertas"><bpmn:incoming>Flow_REC_05</bpmn:incoming><bpmn:outgoing>Flow_REC_06</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:task id="Task_Recalcular" name="Reavaliar estados usando últimas medições válidas"><bpmn:incoming>Flow_REC_06</bpmn:incoming><bpmn:outgoing>Flow_REC_07</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_Divergencia" name="Há estado ou alerta a ajustar?"><bpmn:incoming>Flow_REC_07</bpmn:incoming><bpmn:outgoing>Flow_REC_08</bpmn:outgoing><bpmn:outgoing>Flow_REC_10</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:task id="Task_Preservar" name="Manter registros atuais"><bpmn:incoming>Flow_REC_08</bpmn:incoming><bpmn:outgoing>Flow_REC_09</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_SemAlteracao" name="Sem divergência"><bpmn:incoming>Flow_REC_09</bpmn:incoming></bpmn:endEvent>
+    <bpmn:serviceTask id="Task_AplicarAjustes" name="Persistir ajustes com unicidade e transação"><bpmn:incoming>Flow_REC_10</bpmn:incoming><bpmn:outgoing>Flow_REC_11</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:endEvent id="End_Reconciliado" name="Estados consistentes"><bpmn:incoming>Flow_REC_11</bpmn:incoming></bpmn:endEvent>
+    <bpmn:boundaryEvent id="Boundary_ErroConsultaRec" name="Falha de consulta" attachedToRef="Task_Carregar" cancelActivity="true"><bpmn:outgoing>Flow_REC_12</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_ErroConsultaRec" errorRef="Error_REC"/></bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Boundary_ErroAjusteRec" name="Falha de gravação" attachedToRef="Task_AplicarAjustes" cancelActivity="true"><bpmn:outgoing>Flow_REC_13</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_ErroAjusteRec" errorRef="Error_REC"/></bpmn:boundaryEvent>
+    <bpmn:task id="Task_RegistrarFalha" name="Registrar falha e aguardar próxima verificação"><bpmn:incoming>Flow_REC_12</bpmn:incoming><bpmn:incoming>Flow_REC_13</bpmn:incoming><bpmn:outgoing>Flow_REC_14</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_Falha" name="Retomada pendente"><bpmn:incoming>Flow_REC_14</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_REC_01" sourceRef="Start_Reavaliacao" targetRef="Task_ConsultarBanco"/>
+    <bpmn:sequenceFlow id="Flow_REC_02" sourceRef="Task_ConsultarBanco" targetRef="Gateway_BancoDisponivel"/>
+    <bpmn:sequenceFlow id="Flow_REC_03" sourceRef="Gateway_BancoDisponivel" targetRef="Task_RegistrarIndisponivel" name="Não"/>
+    <bpmn:sequenceFlow id="Flow_REC_04" sourceRef="Task_RegistrarIndisponivel" targetRef="End_SemBanco"/>
+    <bpmn:sequenceFlow id="Flow_REC_05" sourceRef="Gateway_BancoDisponivel" targetRef="Task_Carregar" name="Sim"/>
+    <bpmn:sequenceFlow id="Flow_REC_06" sourceRef="Task_Carregar" targetRef="Task_Recalcular"/>
+    <bpmn:sequenceFlow id="Flow_REC_07" sourceRef="Task_Recalcular" targetRef="Gateway_Divergencia"/>
+    <bpmn:sequenceFlow id="Flow_REC_08" sourceRef="Gateway_Divergencia" targetRef="Task_Preservar" name="Não"/>
+    <bpmn:sequenceFlow id="Flow_REC_09" sourceRef="Task_Preservar" targetRef="End_SemAlteracao"/>
+    <bpmn:sequenceFlow id="Flow_REC_10" sourceRef="Gateway_Divergencia" targetRef="Task_AplicarAjustes" name="Sim"/>
+    <bpmn:sequenceFlow id="Flow_REC_11" sourceRef="Task_AplicarAjustes" targetRef="End_Reconciliado"/>
+    <bpmn:sequenceFlow id="Flow_REC_12" sourceRef="Boundary_ErroConsultaRec" targetRef="Task_RegistrarFalha"/>
+    <bpmn:sequenceFlow id="Flow_REC_13" sourceRef="Boundary_ErroAjusteRec" targetRef="Task_RegistrarFalha"/>
+    <bpmn:sequenceFlow id="Flow_REC_14" sourceRef="Task_RegistrarFalha" targetRef="End_Falha"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_DP007"><bpmndi:BPMNPlane id="Plane_DP007" bpmnElement="Collaboration_DP007">
+  <bpmndi:BPMNShape id="Shape_Participant_DP007" bpmnElement="Participant_DevicePulse_DP007" isHorizontal="true"><dc:Bounds x="35" y="95" width="1740" height="565"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Shape_Start_Reavaliacao" bpmnElement="Start_Reavaliacao"><dc:Bounds x="85" y="324" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_ConsultarBanco" bpmnElement="Task_ConsultarBanco"><dc:Bounds x="170" y="305" width="168" height="74"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_BancoDisponivel" bpmnElement="Gateway_BancoDisponivel" isMarkerVisible="true"><dc:Bounds x="400" y="315" width="54" height="54"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_RegistrarIndisponivel" bpmnElement="Task_RegistrarIndisponivel"><dc:Bounds x="510" y="145" width="194" height="78"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_SemBanco" bpmnElement="End_SemBanco"><dc:Bounds x="770" y="165" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Carregar" bpmnElement="Task_Carregar"><dc:Bounds x="510" y="306" width="194" height="78"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Recalcular" bpmnElement="Task_Recalcular"><dc:Bounds x="770" y="306" width="212" height="78"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_Divergencia" bpmnElement="Gateway_Divergencia" isMarkerVisible="true"><dc:Bounds x="1045" y="315" width="54" height="54"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Preservar" bpmnElement="Task_Preservar"><dc:Bounds x="1165" y="145" width="180" height="78"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_SemAlteracao" bpmnElement="End_SemAlteracao"><dc:Bounds x="1410" y="165" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_AplicarAjustes" bpmnElement="Task_AplicarAjustes"><dc:Bounds x="1165" y="306" width="214" height="78"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Reconciliado" bpmnElement="End_Reconciliado"><dc:Bounds x="1490" y="327" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Boundary_ErroConsultaRec" bpmnElement="Boundary_ErroConsultaRec"><dc:Bounds x="665" y="361" width="34" height="34"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Boundary_ErroAjusteRec" bpmnElement="Boundary_ErroAjusteRec"><dc:Bounds x="1340" y="361" width="34" height="34"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_RegistrarFalha" bpmnElement="Task_RegistrarFalha"><dc:Bounds x="1420" y="502" width="218" height="78"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Falha" bpmnElement="End_Falha"><dc:Bounds x="1700" y="523" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="Edge_Flow_REC_01" bpmnElement="Flow_REC_01"><di:waypoint x="121" y="342"/><di:waypoint x="170" y="342"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_02" bpmnElement="Flow_REC_02"><di:waypoint x="338" y="342"/><di:waypoint x="400" y="342"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_03" bpmnElement="Flow_REC_03"><di:waypoint x="454" y="342"/><di:waypoint x="482" y="342"/><di:waypoint x="482" y="184"/><di:waypoint x="510" y="184"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_04" bpmnElement="Flow_REC_04"><di:waypoint x="704" y="184"/><di:waypoint x="770" y="183"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_05" bpmnElement="Flow_REC_05"><di:waypoint x="454" y="342"/><di:waypoint x="510" y="345"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_06" bpmnElement="Flow_REC_06"><di:waypoint x="704" y="345"/><di:waypoint x="770" y="345"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_07" bpmnElement="Flow_REC_07"><di:waypoint x="982" y="345"/><di:waypoint x="1045" y="342"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_08" bpmnElement="Flow_REC_08"><di:waypoint x="1099" y="342"/><di:waypoint x="1132" y="342"/><di:waypoint x="1132" y="184"/><di:waypoint x="1165" y="184"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_09" bpmnElement="Flow_REC_09"><di:waypoint x="1345" y="184"/><di:waypoint x="1410" y="183"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_10" bpmnElement="Flow_REC_10"><di:waypoint x="1099" y="342"/><di:waypoint x="1165" y="345"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_11" bpmnElement="Flow_REC_11"><di:waypoint x="1379" y="345"/><di:waypoint x="1490" y="345"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_12" bpmnElement="Flow_REC_12"><di:waypoint x="682" y="395"/><di:waypoint x="682" y="541"/><di:waypoint x="1420" y="541"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_13" bpmnElement="Flow_REC_13"><di:waypoint x="1357" y="395"/><di:waypoint x="1357" y="541"/><di:waypoint x="1420" y="541"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_REC_14" bpmnElement="Flow_REC_14"><di:waypoint x="1638" y="541"/><di:waypoint x="1700" y="541"/></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,10 +1,10 @@
 # DP-005 — BPMN 2.0: Cadastro e Ingestão de Eventos
 
-**Versão:** 1.0  
-**Status:** Aprovado — modelagem inicial  
+**Versão:** 1.1  
+**Status:** Revisão técnica aprovada no DP-007  
 **Tipo:** Modelagem TO-BE — processo proposto para o DevicePulse  
 **Card:** DP-005  
-**Referências:** [DP-002](../02-atores-jornadas-casos-de-uso.md), [DP-003](../03-requisitos-funcionais-e-nao-funcionais.md) e [DP-004](../04-regras-de-negocio-e-estados.md) — versões 1.0
+**Referências:** [DP-002](02-atores-jornadas-casos-de-uso.md), [DP-003](03-requisitos-funcionais-e-nao-funcionais.md) e [DP-004](04-regras-de-negocio-e-estados.md) — versões 1.0
 
 ## 1. Objetivo e escopo
 
@@ -162,4 +162,15 @@ O simulador, o operador e a API **não acessam dispositivos físicos ou serviço
 - [ ] Nenhuma regra contradiz os documentos DP-001 a DP-004.
 - [ ] O fluxo de ciclo de vida de alertas fica corretamente reservado ao DP-006.
 
-**Status do documento:** versão 1.0 aprovada para servir de base ao DP-006. A importação visual de `05-cadastro.bpmn` foi confirmada no BPMN.io; a abertura visual completa de `05-ingestao.bpmn` e eventuais ajustes de legibilidade ficam registrados como verificação técnica complementar para o DP-007. Os códigos de resposta HTTP permanecem propostos até o contrato REST (DP-010).
+**Status do documento:** versão 1.0 foi aprovada como base do DP-006. A revisão técnica 1.1 proposta no DP-007 amplia o tratamento de falhas de banco e depende de aprovação do novo card. A importação visual de `05-cadastro.bpmn` foi confirmada no BPMN.io; a abertura visual completa de `05-ingestao.bpmn` e eventuais ajustes de legibilidade ficam registrados como verificação técnica complementar para o DP-007. Os códigos de resposta HTTP permanecem propostos até o contrato REST (DP-010).
+
+
+## Revisão técnica DP-007 — proposta de versão 1.1
+
+- O BPMN de cadastro agora trata também a **falha ao consultar a existência do identificador**, não somente a falha na gravação.
+- O BPMN de ingestão agora trata falhas durante **localização do dispositivo**, **consulta de `eventId`** e **avaliação do estado**.
+- As saídas de erro já existentes foram reutilizadas, preservando os caminhos e o escopo aprovados; nenhum resultado de falha deve ser confirmado como sucesso.
+- Foram disponibilizadas prévias SVG [do cadastro](bpmn/05-cadastro.svg) e [da ingestão](bpmn/05-ingestao.svg) derivadas do layout BPMN DI atualizado.
+- Consulte a [matriz de exceções e validação BPMN](07-validacao-bpmn-e-matriz-excecoes.md) para responsabilidades, términos e política de retomada.
+
+**Revisão 1.1 aprovada no DP-007.** A conferência visual completa em BPMN.io permanece pendente para registro antes do portão de aprovação DP-013.

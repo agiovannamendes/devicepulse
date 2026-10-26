@@ -1,7 +1,7 @@
 # DP-006 — BPMN 2.0: Alertas, Reconhecimento e Resolução
 
-**Versão:** 1.0  
-**Situação:** Aprovado — modelagem dos processos  
+**Versão:** 1.1  
+**Situação:** Revisão técnica aprovada no DP-007  
 **Card:** DP-006  
 **Tipo de processo:** TO-BE (fluxos projetados; dados fictícios)  
 **Referências:** [DP-004 — Regras de Negócio e Estados](04-regras-de-negocio-e-estados.md) e [DP-005 — Cadastro e Ingestão](05-bpmn-cadastro-ingestao.md)
@@ -183,8 +183,19 @@ O diagrama A representa **uma avaliação por tipo de alerta**, independentement
 
 **Aprovação:** os fluxos e a documentação do DP-006 foram aprovados para integração à `main`. **Verificação técnica pendente:** a importação e a legibilidade final dos arquivos `.bpmn` no BPMN.io continuam como atividade do DP-007; a aprovação do conteúdo não equivale a afirmar que essa verificação já foi executada.
 
-**Próximo card:** DP-007 — Validar BPMNs e documentar exceções operacionais.
+**Próximo card:** DP-007 — Validar BPMNs e documentar exceções operacionais (em execução).
 
 ---
 
 *Documento de modelagem para um sistema fictício de demonstração. Não representa processos operacionais reais de empresas de monitoramento.*
+
+
+## Revisão técnica DP-007 — proposta de versão 1.1
+
+- O BPMN de avaliação de alertas agora trata erros ao **consultar alertas abertos** e ao **consultar ocorrências para resolução**, além das falhas de gravação.
+- O BPMN de reconhecimento agora trata falhas na consulta de ocorrências, na checagem de resolução e na verificação de reconhecimento prévio.
+- As prévias SVG de ambos os processos foram atualizadas para acompanhar o layout BPMN DI revisado.
+- Os comportamentos aprovados (limite de bateria, timeout, reconhecimento independente da resolução e unicidade de alerta aberto) permanecem inalterados.
+- Consulte [DP-007 — Matriz de exceções](07-validacao-bpmn-e-matriz-excecoes.md) para responsabilidades, respostas e retomada operacional.
+
+**Revisão 1.1 aprovada no DP-007.** A validação visual dos arquivos BPMN no BPMN.io continua pendente para registro antes do portão de aprovação DP-013.
