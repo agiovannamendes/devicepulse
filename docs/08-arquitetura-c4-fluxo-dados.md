@@ -1,7 +1,7 @@
 # DP-008 — Arquitetura C4 e fluxo de dados
 
-**Versão:** 0.1  
-**Situação:** Proposta para revisão  
+**Versão:** 1.0  
+**Situação:** Aprovado em 26/10/2026  
 **Projeto:** DevicePulse — dispositivos e eventos exclusivamente fictícios  
 **Card:** DP-008  
 **Referências:** [DP-003 — Requisitos](03-requisitos-funcionais-e-nao-funcionais.md), [DP-004 — Regras](04-regras-de-negocio-e-estados.md), [DP-007 — Exceções e BPMNs](07-validacao-bpmn-e-matriz-excecoes.md).
@@ -10,7 +10,7 @@
 
 Definir o contexto do sistema e os contêineres responsáveis por transformar um evento simulado em estado operacional, histórico, alertas e indicadores exibidos ao operador.
 
-A proposta utiliza React/Vite, Node.js/Express e PostgreSQL, com um simulador Node.js separado. O backend será um **monólito modular**, não uma rede de microserviços. Os diagramas representam arquitetura planejada; **o sistema ainda não foi implementado**.
+A proposta utiliza React/Vite, Node.js/Express e PostgreSQL, com um simulador Node.js separado. O backend será um **monólito modular**, não uma rede de microserviços. Os diagramas representam a **arquitetura aprovada para implementação**; o sistema ainda não foi implementado.
 
 ## 2. Níveis de detalhamento do C4
 
@@ -140,7 +140,7 @@ A estrutura interna será detalhada durante a implementação, respeitando o con
 
 Consultar o arquivo [ADRs do DP-008](arquitetura/08-decisoes-arquiteturais-adrs.md) para contexto, alternativas, motivos e consequências:
 
-| ADR | Decisão proposta |
+| ADR | Decisão aprovada |
 | --- | --- |
 | ADR-001 | Monólito modular Node/Express; verificador no backend |
 | ADR-002 | PostgreSQL, integridade e transações |
@@ -148,7 +148,7 @@ Consultar o arquivo [ADRs do DP-008](arquitetura/08-decisoes-arquiteturais-adrs.
 | ADR-004 | Simulador Node separado, consumindo a mesma API |
 | ADR-005 | Demo local; publicação pública apenas após avaliação de segurança |
 
-Todos os ADRs permanecem **propostos** até a aprovação deste card.
+Os cinco ADRs foram **aprovados no DP-008**. Revisões futuras exigem registro e análise de impacto.
 
 ## 10. Rastreabilidade dos requisitos
 
@@ -181,6 +181,8 @@ Todos os ADRs permanecem **propostos** até a aprovação deste card.
 - [ ] Decisões justificadas em cinco ADRs com alternativas e consequências.
 - [ ] Fontes Mermaid e prévias SVG podem ser consultadas no GitHub.
 - [ ] Documento e ADRs revisados antes de integrar à branch principal.
+
+**Aprovação:** arquitetura C4 L1/L2, responsabilidades, interfaces e cinco ADRs aprovados em 26/10/2026. Permanece pendente, para o portão DP-013, a evidência de validação visual dos BPMNs existentes no modelador; o DP-008 não substitui essa verificação.
 
 **Próxima tarefa:** DP-009 — Modelar o banco PostgreSQL e dicionário de dados.
 
