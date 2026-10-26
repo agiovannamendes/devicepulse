@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1470" height="660" viewBox="0 0 1470 660" role="img" aria-label="DP-009 — DER lógico">
+<defs><marker id="arrow" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto"><path d="M0 0 L10 4.5 L0 9 Z" fill="#436f9a"/></marker><style>text{font-family:Arial,Helvetica,sans-serif;fill:#203c53}.link{fill:none;stroke:#436f9a;stroke-width:2.3;marker-end:url(#arrow)}</style></defs>
+<rect width="1470" height="660" fill="#ffffff"/>
+<text x="50" y="64" font-size="33" font-weight="bold">DP-009 — DER lógico</text>
+<text x="50" y="100" font-size="17" fill="#61788b">Relações de negócio (1 dispositivo → muitos eventos e alertas)</text><rect x="50" y="190" width="320" height="250" rx="12" fill="#f6faff" stroke="#2b648f" stroke-width="2.2"/>
+<rect x="50" y="190" width="320" height="48" rx="12" fill="#185780"/>
+<rect x="50" y="220" width="320" height="18" fill="#185780"/>
+<text x="67" y="222" font-size="21" fill="#ffffff" font-weight="bold">DISPOSITIVO</text><text x="66" y="265" font-size="16">id: identidade interna</text><text x="66" y="291" font-size="16">codigo: identificador único</text><text x="66" y="317" font-size="16">nome: exibição</text><text x="66" y="343" font-size="16">comunicação: estado atual</text><text x="66" y="369" font-size="16">última bateria: opcional</text><text x="66" y="395" font-size="16">último evento: opcional</text><rect x="520" y="190" width="325" height="250" rx="12" fill="#f6faff" stroke="#2b648f" stroke-width="2.2"/>
+<rect x="520" y="190" width="325" height="48" rx="12" fill="#185780"/>
+<rect x="520" y="220" width="325" height="18" fill="#185780"/>
+<text x="537" y="222" font-size="21" fill="#ffffff" font-weight="bold">EVENTO</text><text x="536" y="265" font-size="16">event_id: identidade global</text><text x="536" y="291" font-size="16">dispositivo_id: referência</text><text x="536" y="317" font-size="16">ocorrido_em: data real</text><text x="536" y="343" font-size="16">recebido_em: data recebida</text><text x="536" y="369" font-size="16">bateria_percentual: 0–100</text><rect x="990" y="190" width="340" height="250" rx="12" fill="#f6faff" stroke="#2b648f" stroke-width="2.2"/>
+<rect x="990" y="190" width="340" height="48" rx="12" fill="#185780"/>
+<rect x="990" y="220" width="340" height="18" fill="#185780"/>
+<text x="1007" y="222" font-size="21" fill="#ffffff" font-weight="bold">ALERTA</text><text x="1006" y="265" font-size="16">id: identidade</text><text x="1006" y="291" font-size="16">dispositivo_id: referência</text><text x="1006" y="317" font-size="16">tipo: bateria / comunicação</text><text x="1006" y="343" font-size="16">aberto_em: instante</text><text x="1006" y="369" font-size="16">reconhecido_em: opcional</text><text x="1006" y="395" font-size="16">resolvido_em: opcional</text><text x="1006" y="421" font-size="16">evento_origem: opcional</text><path class="link" d="M370 323 L495 323 L495 323 L520 323"/>
+<path class="link" d="M210 440 L210 517 L1160 517 L1160 440"/>
+<path class="link" d="M845 347 L990 347"/>
+<text x="381" y="306" font-size="16">1 : N</text>
+<text x="920" y="506" font-size="16">1 : N</text>
+<text x="858" y="330" font-size="16">0..1 : 0..1</text>
+<text x="52" y="608" font-size="15" fill="#66798b">PK = chave primária • FK = chave estrangeira • UK = unicidade • ? = campo opcional</text>
+<text x="52" y="635" font-size="14" fill="#66798b">Fonte editável: 09-der-logico.mmd • Projeto fictício DevicePulse • DP-009</text></svg>

@@ -1,0 +1,33 @@
+erDiagram
+    devices ||--o{ device_events : "device_id"
+    devices ||--o{ alerts : "device_id"
+    device_events o|--o| alerts : "source_event_id + device_id"
+
+    devices {
+        UUID id PK "gerado pela aplicacao"
+        VARCHAR_50 code UK "normalizado"
+        VARCHAR_120 name "obrigatorio"
+        VARCHAR_12 connectivity_status "SEM_DADOS ONLINE OFFLINE"
+        SMALLINT last_battery_level "nullable"
+        TIMESTAMPTZ last_event_at "nullable"
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    device_events {
+        UUID id PK "eventId global"
+        UUID device_id FK
+        TIMESTAMPTZ occurred_at
+        TIMESTAMPTZ received_at
+        SMALLINT battery_level
+    }
+
+    alerts {
+        UUID id PK
+        UUID device_id FK
+        VARCHAR_20 alert_type "LOW_BATTERY NO_COMMUNICATION"
+        UUID source_event_id FK "nullable para offline"
+        TIMESTAMPTZ opened_at
+        TIMESTAMPTZ acknowledged_at "nullable"
+        TIMESTAMPTZ resolved_at "nullable"
+    }
