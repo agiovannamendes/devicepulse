@@ -1,7 +1,7 @@
 # DP-007 — Validação cruzada dos BPMNs e matriz de exceções
 
-**Versão:** 0.1  
-**Situação:** Em revisão (ainda não aprovado)  
+**Versão:** 1.0  
+**Situação:** Aprovado quanto ao conteúdo e à revisão documental  
 **Card:** DP-007  
 **Base:** DP-003 — requisitos, DP-004 — regras de negócio, DP-005 — cadastro/ingestão e DP-006 — alertas (versões aprovadas na `main`).
 
@@ -114,9 +114,9 @@ Os fluxos modelam respostas de sucesso e de erro, mas **não são executáveis n
 
 **Validação estrutural automatizada:** checar estrutura XML dos `.bpmn`, unicidade de identificadores, referências a elementos, caminhos de saída, BPMN DI (formas e setas), presença de arquivo SVG correspondente e links da documentação.
 
-**Validação visual pendente:** importar individualmente os **cinco** arquivos BPMN no BPMN.io e verificar gateways, caminhos de exceção, setas de mensagem, sobreposições e legibilidade. A abertura prévia de **05-cadastro.bpmn** já foi demonstrada; os demais ainda exigem conferência visual. Não declarar esse critério concluído sem evidência.
+**Validação visual pendente:** importar individualmente os **cinco** arquivos BPMN no BPMN.io e verificar gateways, caminhos de exceção, setas de mensagem, sobreposições e legibilidade. A abertura prévia de **05-cadastro.bpmn** já foi demonstrada; os demais ainda exigem conferência visual. **A aprovação do documento não comprova a realização desta verificação.** Essa pendência deve ser registrada e resolvida antes da aprovação final da documentação no DP-013.
 
-**Compatibilidade semântica BPMN:** conferência estrutural automatizada não equivale à validação completa pelo motor/modelador BPMN, nem à execução de regras. O DP-007 só será concluído quando a revisão visual e funcional também for aceita.
+**Compatibilidade semântica BPMN:** conferência estrutural automatizada não equivale à validação completa pelo motor/modelador BPMN, nem à execução de regras. A revisão documental do DP-007 foi aprovada; a verificação visual externa no BPMN.io continua como pendência técnica para a revisão final da documentação (DP-013).
 
 ### Critérios de aceite DP-007
 
@@ -129,7 +129,8 @@ Os fluxos modelam respostas de sucesso e de erro, mas **não são executáveis n
 - [ ] Todos os diagramas BPMN podem ser abertos e editados no BPMN.io.
 - [ ] As prévias SVG correspondem às versões revisadas dos arquivos BPMN.
 - [ ] Os ajustes de contrato HTTP ficam claramente reservados ao DP-010.
-- [ ] A revisão final do DP-007 é aprovada antes do início de DP-008.
+- [x] A revisão documental do DP-007 foi aprovada antes do início de DP-008.
+- [ ] A evidência da validação visual dos cinco diagramas será registrada antes do portão DP-013.
 
 ## 7. Próximos passos
 
