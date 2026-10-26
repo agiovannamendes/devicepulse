@@ -22,7 +22,7 @@
     <bpmn:endEvent id="End_409" name="Conflito (409)"><bpmn:incoming>Flow_Ing_15</bpmn:incoming></bpmn:endEvent>
     <bpmn:serviceTask id="Task_PersistirEvento" name="Gravar evento e recebimento"><bpmn:incoming>Flow_Ing_16</bpmn:incoming><bpmn:outgoing>Flow_Ing_17</bpmn:outgoing></bpmn:serviceTask>
     <bpmn:boundaryEvent id="Boundary_ErroPersistenciaEvento" name="Falha de persistência" attachedToRef="Task_PersistirEvento" cancelActivity="true"><bpmn:outgoing>Flow_Ing_18</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorEvt_Boundary_ErroPersistenciaEvento" errorRef="Error_ingestao"/></bpmn:boundaryEvent>
-    <bpmn:sendTask id="Task_Resp500" name="Responder: falha interna"><bpmn:incoming>Flow_Ing_18</bpmn:incoming><bpmn:outgoing>Flow_Ing_19</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:sendTask id="Task_Resp500" name="Responder: falha interna"><bpmn:incoming>Flow_DP007_DB_Task_AvaliarEstado</bpmn:incoming><bpmn:incoming>Flow_DP007_DB_Task_ConferirEventId</bpmn:incoming><bpmn:incoming>Flow_DP007_DB_Task_LocalizarDispositivo</bpmn:incoming><bpmn:incoming>Flow_Ing_18</bpmn:incoming><bpmn:outgoing>Flow_Ing_19</bpmn:outgoing></bpmn:sendTask>
     <bpmn:endEvent id="End_500" name="Falha (500)"><bpmn:incoming>Flow_Ing_19</bpmn:incoming></bpmn:endEvent>
     <bpmn:exclusiveGateway id="Gateway_EventoMaisRecente" name="Mais recente?"><bpmn:incoming>Flow_Ing_17</bpmn:incoming><bpmn:outgoing>Flow_Ing_20</bpmn:outgoing><bpmn:outgoing>Flow_Ing_22</bpmn:outgoing></bpmn:exclusiveGateway>
     <bpmn:sendTask id="Task_Resp201Historico" name="Responder: registrado no histórico"><bpmn:incoming>Flow_Ing_20</bpmn:incoming><bpmn:outgoing>Flow_Ing_21</bpmn:outgoing></bpmn:sendTask>
@@ -54,6 +54,12 @@
     <bpmn:sequenceFlow id="Flow_Ing_22" sourceRef="Gateway_EventoMaisRecente" targetRef="Task_AvaliarEstado" name="Sim" />
     <bpmn:sequenceFlow id="Flow_Ing_23" sourceRef="Task_AvaliarEstado" targetRef="Task_Resp201" />
     <bpmn:sequenceFlow id="Flow_Ing_24" sourceRef="Task_Resp201" targetRef="End_201" />
+    <bpmn:boundaryEvent id="Boundary_DB_DP007_Task_LocalizarDispositivo" name="Falha de banco" attachedToRef="Task_LocalizarDispositivo" cancelActivity="true"><bpmn:outgoing>Flow_DP007_DB_Task_LocalizarDispositivo</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_DB_DP007_Task_LocalizarDispositivo" errorRef="Error_ingestao"/></bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_DP007_DB_Task_LocalizarDispositivo" sourceRef="Boundary_DB_DP007_Task_LocalizarDispositivo" targetRef="Task_Resp500"/>
+    <bpmn:boundaryEvent id="Boundary_DB_DP007_Task_ConferirEventId" name="Falha de banco" attachedToRef="Task_ConferirEventId" cancelActivity="true"><bpmn:outgoing>Flow_DP007_DB_Task_ConferirEventId</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_DB_DP007_Task_ConferirEventId" errorRef="Error_ingestao"/></bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_DP007_DB_Task_ConferirEventId" sourceRef="Boundary_DB_DP007_Task_ConferirEventId" targetRef="Task_Resp500"/>
+    <bpmn:boundaryEvent id="Boundary_DB_DP007_Task_AvaliarEstado" name="Falha de banco" attachedToRef="Task_AvaliarEstado" cancelActivity="true"><bpmn:outgoing>Flow_DP007_DB_Task_AvaliarEstado</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_DB_DP007_Task_AvaliarEstado" errorRef="Error_ingestao"/></bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_DP007_DB_Task_AvaliarEstado" sourceRef="Boundary_DB_DP007_Task_AvaliarEstado" targetRef="Task_Resp500"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="Diagram_ingestao">
     <bpmndi:BPMNPlane id="Plane_ingestao" bpmnElement="Collaboration_ingestao">
@@ -117,6 +123,12 @@
 <bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_5" bpmnElement="MessageFlow_Response_ingestao_5"><di:waypoint x="1608.5" y="738"/><di:waypoint x="1608.5" y="165"/></bpmndi:BPMNEdge>
 <bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_6" bpmnElement="MessageFlow_Response_ingestao_6"><di:waypoint x="1666" y="635"/><di:waypoint x="1666" y="165"/></bpmndi:BPMNEdge>
 <bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_7" bpmnElement="MessageFlow_Response_ingestao_7"><di:waypoint x="1903.5" y="455"/><di:waypoint x="1903.5" y="165"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_Boundary_DB_DP007_Task_LocalizarDispositivo" bpmnElement="Boundary_DB_DP007_Task_LocalizarDispositivo"><dc:Bounds x="647" y="514" width="32" height="32"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_DP007_DB_Task_LocalizarDispositivo" bpmnElement="Flow_DP007_DB_Task_LocalizarDispositivo"><di:waypoint x="663" y="546"/><di:waypoint x="663" y="616"/><di:waypoint x="1490" y="616"/><di:waypoint x="1490" y="772"/><di:waypoint x="1520" y="772"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_Boundary_DB_DP007_Task_ConferirEventId" bpmnElement="Boundary_DB_DP007_Task_ConferirEventId"><dc:Bounds x="1008" y="514" width="32" height="32"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_DP007_DB_Task_ConferirEventId" bpmnElement="Flow_DP007_DB_Task_ConferirEventId"><di:waypoint x="1024" y="546"/><di:waypoint x="1024" y="631"/><di:waypoint x="1490" y="631"/><di:waypoint x="1490" y="772"/><di:waypoint x="1520" y="772"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_Boundary_DB_DP007_Task_AvaliarEstado" bpmnElement="Boundary_DB_DP007_Task_AvaliarEstado"><dc:Bounds x="1732" y="514" width="32" height="32"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_DP007_DB_Task_AvaliarEstado" bpmnElement="Flow_DP007_DB_Task_AvaliarEstado"><di:waypoint x="1748" y="546"/><di:waypoint x="1748" y="646"/><di:waypoint x="1490" y="646"/><di:waypoint x="1490" y="772"/><di:waypoint x="1520" y="772"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
