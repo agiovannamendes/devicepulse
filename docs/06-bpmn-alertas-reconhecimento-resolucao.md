@@ -1,7 +1,7 @@
 # DP-006 — BPMN 2.0: Alertas, Reconhecimento e Resolução
 
-**Versão:** 1.1 (revisão técnica proposta no DP-007)  
-**Situação:** Revisão de exceções — aguardando aprovação do DP-007  
+**Versão:** 1.1  
+**Situação:** Revisão técnica aprovada no DP-007  
 **Card:** DP-006  
 **Tipo de processo:** TO-BE (fluxos projetados; dados fictícios)  
 **Referências:** [DP-004 — Regras de Negócio e Estados](04-regras-de-negocio-e-estados.md) e [DP-005 — Cadastro e Ingestão](05-bpmn-cadastro-ingestao.md)
@@ -198,4 +198,4 @@ O diagrama A representa **uma avaliação por tipo de alerta**, independentement
 - Os comportamentos aprovados (limite de bateria, timeout, reconhecimento independente da resolução e unicidade de alerta aberto) permanecem inalterados.
 - Consulte [DP-007 — Matriz de exceções](07-validacao-bpmn-e-matriz-excecoes.md) para responsabilidades, respostas e retomada operacional.
 
-**Pendente:** validação visual final e aprovação da revisão no DP-007.
+**Revisão 1.1 aprovada no DP-007.** A validação visual dos arquivos BPMN no BPMN.io continua pendente para registro antes do portão de aprovação DP-013.
