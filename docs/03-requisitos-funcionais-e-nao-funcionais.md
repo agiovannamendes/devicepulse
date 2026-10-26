@@ -1,7 +1,7 @@
 # DevicePulse — Documento 03: Requisitos Funcionais e Não Funcionais
 
-**Versão:** 0.1  
-**Situação:** Rascunho para revisão  
+**Versão:** 1.0  
+**Situação:** Aprovado — especificação inicial  
 **Card:** DP-003  
 **Referências:** Documento 01 — Visão e Escopo (v1.0); Documento 02 — Atores, Jornadas e Casos de Uso (v1.0)
 
