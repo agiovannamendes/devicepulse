@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_cadastro" targetNamespace="https://github.com/agiovannamendes/devicepulse/bpmn" exporter="DevicePulse" exporterVersion="1.0">
+  <bpmn:message id="Message_cadastro" name="Solicitação enviada ao DevicePulse"/>
+  <bpmn:error id="Error_cadastro" name="Falha ao persistir no banco" errorCode="DATABASE_ERROR"/>
+  <bpmn:collaboration id="Collaboration_cadastro"><bpmn:participant id="Participant_Actor_cadastro" name="Operador"/><bpmn:participant id="Participant_System_cadastro" name="DevicePulse — API e regras" processRef="Process_cadastro"/><bpmn:messageFlow id="MessageFlow_Request_cadastro" sourceRef="Participant_Actor_cadastro" targetRef="Start_Cadastro"/><bpmn:messageFlow id="MessageFlow_Response_cadastro_1" sourceRef="Task_ErroCampos" targetRef="Participant_Actor_cadastro"/><bpmn:messageFlow id="MessageFlow_Response_cadastro_2" sourceRef="Task_ErroDuplicidade" targetRef="Participant_Actor_cadastro"/><bpmn:messageFlow id="MessageFlow_Response_cadastro_3" sourceRef="Task_ConfirmarCadastro" targetRef="Participant_Actor_cadastro"/><bpmn:messageFlow id="MessageFlow_Response_cadastro_4" sourceRef="Task_ErroPersistencia" targetRef="Participant_Actor_cadastro"/></bpmn:collaboration>
+  <bpmn:process id="Process_cadastro" name="Cadastro de dispositivo" isExecutable="false">
+    <bpmn:startEvent id="Start_Cadastro" name="Solicitação de cadastro"><bpmn:outgoing>Flow_Cad_01</bpmn:outgoing><bpmn:messageEventDefinition id="MsgEvt_Start_Cadastro" messageRef="Message_cadastro"/></bpmn:startEvent>
+    <bpmn:task id="Task_ValidarCadastro" name="Validar campos obrigatórios"><bpmn:incoming>Flow_Cad_01</bpmn:incoming><bpmn:outgoing>Flow_Cad_02</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_CadastroValido" name="Dados válidos?"><bpmn:incoming>Flow_Cad_02</bpmn:incoming><bpmn:outgoing>Flow_Cad_03</bpmn:outgoing><bpmn:outgoing>Flow_Cad_05</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Task_ErroCampos" name="Responder: campos inválidos"><bpmn:incoming>Flow_Cad_03</bpmn:incoming><bpmn:outgoing>Flow_Cad_04</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_Cadastro400" name="Cadastro rejeitado (400)"><bpmn:incoming>Flow_Cad_04</bpmn:incoming></bpmn:endEvent>
+    <bpmn:task id="Task_ConsultarCodigo" name="Consultar identificador"><bpmn:incoming>Flow_Cad_05</bpmn:incoming><bpmn:outgoing>Flow_Cad_06</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_CodigoLivre" name="Código disponível?"><bpmn:incoming>Flow_Cad_06</bpmn:incoming><bpmn:outgoing>Flow_Cad_07</bpmn:outgoing><bpmn:outgoing>Flow_Cad_09</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Task_ErroDuplicidade" name="Responder: código duplicado"><bpmn:incoming>Flow_Cad_07</bpmn:incoming><bpmn:outgoing>Flow_Cad_08</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_Cadastro409" name="Cadastro rejeitado (409)"><bpmn:incoming>Flow_Cad_08</bpmn:incoming></bpmn:endEvent>
+    <bpmn:serviceTask id="Task_SalvarCadastro" name="Gravar dispositivo"><bpmn:incoming>Flow_Cad_09</bpmn:incoming><bpmn:outgoing>Flow_Cad_10</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Boundary_ErroCadastro" name="Falha no banco" attachedToRef="Task_SalvarCadastro" cancelActivity="true"><bpmn:outgoing>Flow_Cad_12</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorEvt_Boundary_ErroCadastro" errorRef="Error_cadastro"/></bpmn:boundaryEvent>
+    <bpmn:sendTask id="Task_ErroPersistencia" name="Responder: falha ao salvar"><bpmn:incoming>Flow_Cad_12</bpmn:incoming><bpmn:outgoing>Flow_Cad_13</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_Cadastro500" name="Cadastro não concluído"><bpmn:incoming>Flow_Cad_13</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sendTask id="Task_ConfirmarCadastro" name="Responder: dispositivo criado"><bpmn:incoming>Flow_Cad_10</bpmn:incoming><bpmn:outgoing>Flow_Cad_11</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_Cadastro201" name="Cadastro concluído"><bpmn:incoming>Flow_Cad_11</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Cad_01" sourceRef="Start_Cadastro" targetRef="Task_ValidarCadastro" />
+    <bpmn:sequenceFlow id="Flow_Cad_02" sourceRef="Task_ValidarCadastro" targetRef="Gateway_CadastroValido" />
+    <bpmn:sequenceFlow id="Flow_Cad_03" sourceRef="Gateway_CadastroValido" targetRef="Task_ErroCampos" name="Não" />
+    <bpmn:sequenceFlow id="Flow_Cad_04" sourceRef="Task_ErroCampos" targetRef="End_Cadastro400" />
+    <bpmn:sequenceFlow id="Flow_Cad_05" sourceRef="Gateway_CadastroValido" targetRef="Task_ConsultarCodigo" name="Sim" />
+    <bpmn:sequenceFlow id="Flow_Cad_06" sourceRef="Task_ConsultarCodigo" targetRef="Gateway_CodigoLivre" />
+    <bpmn:sequenceFlow id="Flow_Cad_07" sourceRef="Gateway_CodigoLivre" targetRef="Task_ErroDuplicidade" name="Não" />
+    <bpmn:sequenceFlow id="Flow_Cad_08" sourceRef="Task_ErroDuplicidade" targetRef="End_Cadastro409" />
+    <bpmn:sequenceFlow id="Flow_Cad_09" sourceRef="Gateway_CodigoLivre" targetRef="Task_SalvarCadastro" name="Sim" />
+    <bpmn:sequenceFlow id="Flow_Cad_10" sourceRef="Task_SalvarCadastro" targetRef="Task_ConfirmarCadastro" />
+    <bpmn:sequenceFlow id="Flow_Cad_11" sourceRef="Task_ConfirmarCadastro" targetRef="End_Cadastro201" />
+    <bpmn:sequenceFlow id="Flow_Cad_12" sourceRef="Boundary_ErroCadastro" targetRef="Task_ErroPersistencia" />
+    <bpmn:sequenceFlow id="Flow_Cad_13" sourceRef="Task_ErroPersistencia" targetRef="End_Cadastro500" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_cadastro">
+    <bpmndi:BPMNPlane id="Plane_cadastro" bpmnElement="Collaboration_cadastro">
+      <bpmndi:BPMNShape id="Shape_Actor_cadastro" bpmnElement="Participant_Actor_cadastro" isHorizontal="true"><dc:Bounds x="40" y="60" width="1530" height="105"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_System_cadastro" bpmnElement="Participant_System_cadastro" isHorizontal="true"><dc:Bounds x="40" y="195" width="1530" height="540"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Start_Cadastro" bpmnElement="Start_Cadastro"><dc:Bounds x="90" y="424" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_ValidarCadastro" bpmnElement="Task_ValidarCadastro"><dc:Bounds x="180" y="405" width="160" height="72"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Gateway_CadastroValido" bpmnElement="Gateway_CadastroValido" isMarkerVisible="true"><dc:Bounds x="400" y="413" width="54" height="54"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_ErroCampos" bpmnElement="Task_ErroCampos"><dc:Bounds x="520" y="290" width="166" height="72"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_Cadastro400" bpmnElement="End_Cadastro400"><dc:Bounds x="750" y="306" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_ConsultarCodigo" bpmnElement="Task_ConsultarCodigo"><dc:Bounds x="520" y="405" width="166" height="72"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Gateway_CodigoLivre" bpmnElement="Gateway_CodigoLivre" isMarkerVisible="true"><dc:Bounds x="750" y="413" width="54" height="54"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_ErroDuplicidade" bpmnElement="Task_ErroDuplicidade"><dc:Bounds x="870" y="290" width="174" height="72"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_Cadastro409" bpmnElement="End_Cadastro409"><dc:Bounds x="1110" y="306" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_SalvarCadastro" bpmnElement="Task_SalvarCadastro"><dc:Bounds x="870" y="405" width="174" height="72"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Boundary_ErroCadastro" bpmnElement="Boundary_ErroCadastro"><dc:Bounds x="1000" y="458" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_ErroPersistencia" bpmnElement="Task_ErroPersistencia"><dc:Bounds x="1120" y="604" width="180" height="72"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_Cadastro500" bpmnElement="End_Cadastro500"><dc:Bounds x="1370" y="620" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_ConfirmarCadastro" bpmnElement="Task_ConfirmarCadastro"><dc:Bounds x="1120" y="405" width="180" height="72"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_Cadastro201" bpmnElement="End_Cadastro201"><dc:Bounds x="1370" y="422" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_Cad_01" bpmnElement="Flow_Cad_01"><di:waypoint x="126" y="442"/><di:waypoint x="180" y="441"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_02" bpmnElement="Flow_Cad_02"><di:waypoint x="340" y="441"/><di:waypoint x="400" y="440"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_03" bpmnElement="Flow_Cad_03"><di:waypoint x="454" y="440"/><di:waypoint x="487" y="440"/><di:waypoint x="487" y="326"/><di:waypoint x="520" y="326"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_04" bpmnElement="Flow_Cad_04"><di:waypoint x="686" y="326"/><di:waypoint x="750" y="324"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_05" bpmnElement="Flow_Cad_05"><di:waypoint x="454" y="440"/><di:waypoint x="520" y="441"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_06" bpmnElement="Flow_Cad_06"><di:waypoint x="686" y="441"/><di:waypoint x="750" y="440"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_07" bpmnElement="Flow_Cad_07"><di:waypoint x="804" y="440"/><di:waypoint x="837" y="440"/><di:waypoint x="837" y="326"/><di:waypoint x="870" y="326"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_08" bpmnElement="Flow_Cad_08"><di:waypoint x="1044" y="326"/><di:waypoint x="1110" y="324"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_09" bpmnElement="Flow_Cad_09"><di:waypoint x="804" y="440"/><di:waypoint x="870" y="441"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_10" bpmnElement="Flow_Cad_10"><di:waypoint x="1044" y="441"/><di:waypoint x="1120" y="441"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_11" bpmnElement="Flow_Cad_11"><di:waypoint x="1300" y="441"/><di:waypoint x="1370" y="440"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_12" bpmnElement="Flow_Cad_12"><di:waypoint x="1018" y="494"/><di:waypoint x="1018" y="640"/><di:waypoint x="1120" y="640"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Cad_13" bpmnElement="Flow_Cad_13"><di:waypoint x="1300" y="640"/><di:waypoint x="1370" y="638"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_MessageRequest_cadastro" bpmnElement="MessageFlow_Request_cadastro"><di:waypoint x="422.5" y="165"/><di:waypoint x="108" y="424"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_MessageResponse_cadastro_1" bpmnElement="MessageFlow_Response_cadastro_1"><di:waypoint x="603" y="290"/><di:waypoint x="603" y="165"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_MessageResponse_cadastro_2" bpmnElement="MessageFlow_Response_cadastro_2"><di:waypoint x="957" y="290"/><di:waypoint x="957" y="165"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_MessageResponse_cadastro_3" bpmnElement="MessageFlow_Response_cadastro_3"><di:waypoint x="1210" y="405"/><di:waypoint x="1210" y="165"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_MessageResponse_cadastro_4" bpmnElement="MessageFlow_Response_cadastro_4"><di:waypoint x="1210" y="604"/><di:waypoint x="1210" y="165"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
