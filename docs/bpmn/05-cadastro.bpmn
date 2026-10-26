@@ -15,7 +15,7 @@
     <bpmn:endEvent id="End_Cadastro409" name="Cadastro rejeitado (409)"><bpmn:incoming>Flow_Cad_08</bpmn:incoming></bpmn:endEvent>
     <bpmn:serviceTask id="Task_SalvarCadastro" name="Gravar dispositivo"><bpmn:incoming>Flow_Cad_09</bpmn:incoming><bpmn:outgoing>Flow_Cad_10</bpmn:outgoing></bpmn:serviceTask>
     <bpmn:boundaryEvent id="Boundary_ErroCadastro" name="Falha no banco" attachedToRef="Task_SalvarCadastro" cancelActivity="true"><bpmn:outgoing>Flow_Cad_12</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorEvt_Boundary_ErroCadastro" errorRef="Error_cadastro"/></bpmn:boundaryEvent>
-    <bpmn:sendTask id="Task_ErroPersistencia" name="Responder: falha ao salvar"><bpmn:incoming>Flow_Cad_12</bpmn:incoming><bpmn:outgoing>Flow_Cad_13</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:sendTask id="Task_ErroPersistencia" name="Responder: falha ao salvar"><bpmn:incoming>Flow_DP007_DB_Task_ConsultarCodigo</bpmn:incoming><bpmn:incoming>Flow_Cad_12</bpmn:incoming><bpmn:outgoing>Flow_Cad_13</bpmn:outgoing></bpmn:sendTask>
     <bpmn:endEvent id="End_Cadastro500" name="Cadastro não concluído"><bpmn:incoming>Flow_Cad_13</bpmn:incoming></bpmn:endEvent>
     <bpmn:sendTask id="Task_ConfirmarCadastro" name="Responder: dispositivo criado"><bpmn:incoming>Flow_Cad_10</bpmn:incoming><bpmn:outgoing>Flow_Cad_11</bpmn:outgoing></bpmn:sendTask>
     <bpmn:endEvent id="End_Cadastro201" name="Cadastro concluído"><bpmn:incoming>Flow_Cad_11</bpmn:incoming></bpmn:endEvent>
@@ -32,6 +32,8 @@
     <bpmn:sequenceFlow id="Flow_Cad_11" sourceRef="Task_ConfirmarCadastro" targetRef="End_Cadastro201" />
     <bpmn:sequenceFlow id="Flow_Cad_12" sourceRef="Boundary_ErroCadastro" targetRef="Task_ErroPersistencia" />
     <bpmn:sequenceFlow id="Flow_Cad_13" sourceRef="Task_ErroPersistencia" targetRef="End_Cadastro500" />
+    <bpmn:boundaryEvent id="Boundary_DB_DP007_Task_ConsultarCodigo" name="Falha de banco" attachedToRef="Task_ConsultarCodigo" cancelActivity="true"><bpmn:outgoing>Flow_DP007_DB_Task_ConsultarCodigo</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_DB_DP007_Task_ConsultarCodigo" errorRef="Error_cadastro"/></bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_DP007_DB_Task_ConsultarCodigo" sourceRef="Boundary_DB_DP007_Task_ConsultarCodigo" targetRef="Task_ErroPersistencia"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="Diagram_cadastro">
     <bpmndi:BPMNPlane id="Plane_cadastro" bpmnElement="Collaboration_cadastro">
@@ -70,6 +72,8 @@
 <bpmndi:BPMNEdge id="Edge_MessageResponse_cadastro_2" bpmnElement="MessageFlow_Response_cadastro_2"><di:waypoint x="957" y="290"/><di:waypoint x="957" y="165"/></bpmndi:BPMNEdge>
 <bpmndi:BPMNEdge id="Edge_MessageResponse_cadastro_3" bpmnElement="MessageFlow_Response_cadastro_3"><di:waypoint x="1210" y="405"/><di:waypoint x="1210" y="165"/></bpmndi:BPMNEdge>
 <bpmndi:BPMNEdge id="Edge_MessageResponse_cadastro_4" bpmnElement="MessageFlow_Response_cadastro_4"><di:waypoint x="1210" y="604"/><di:waypoint x="1210" y="165"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_Boundary_DB_DP007_Task_ConsultarCodigo" bpmnElement="Boundary_DB_DP007_Task_ConsultarCodigo"><dc:Bounds x="656" y="462" width="32" height="32"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_DP007_DB_Task_ConsultarCodigo" bpmnElement="Flow_DP007_DB_Task_ConsultarCodigo"><di:waypoint x="672" y="494"/><di:waypoint x="672" y="548"/><di:waypoint x="1090" y="548"/><di:waypoint x="1090" y="640"/><di:waypoint x="1120" y="640"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
