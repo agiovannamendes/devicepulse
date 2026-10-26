@@ -24,7 +24,7 @@
     <bpmn:endEvent id="End_Resolvido" name="Alerta resolvido"><bpmn:incoming>Flow_TaskResolver_EndResolvido</bpmn:incoming></bpmn:endEvent>
     <bpmn:task id="Task_NenhumaAcao" name="Não há alerta a resolver"><bpmn:incoming>Flow_GatewayResolver_TaskNenhumaAcao</bpmn:incoming><bpmn:outgoing>Flow_TaskNenhumaAcao_EndNenhumaAcao</bpmn:outgoing></bpmn:task>
     <bpmn:endEvent id="End_NenhumaAcao" name="Sem alteração"><bpmn:incoming>Flow_TaskNenhumaAcao_EndNenhumaAcao</bpmn:incoming></bpmn:endEvent>
-    <bpmn:task id="Task_RegistrarFalha" name="Registrar falha; não confirmar alteração"><bpmn:incoming>Flow_BoundaryErroAbrir_TaskRegistrarFalha</bpmn:incoming><bpmn:incoming>Flow_BoundaryErroResolver_TaskRegistrarFalha</bpmn:incoming><bpmn:outgoing>Flow_TaskRegistrarFalha_EndErro</bpmn:outgoing></bpmn:task>
+    <bpmn:task id="Task_RegistrarFalha" name="Registrar falha; não confirmar alteração"><bpmn:incoming>Flow_DP007_DB_Task_ConsultarNormal</bpmn:incoming><bpmn:incoming>Flow_DP007_DB_Task_ConsultarAberto</bpmn:incoming><bpmn:incoming>Flow_BoundaryErroAbrir_TaskRegistrarFalha</bpmn:incoming><bpmn:incoming>Flow_BoundaryErroResolver_TaskRegistrarFalha</bpmn:incoming><bpmn:outgoing>Flow_TaskRegistrarFalha_EndErro</bpmn:outgoing></bpmn:task>
     <bpmn:endEvent id="End_Erro" name="Falha tratada"><bpmn:incoming>Flow_TaskRegistrarFalha_EndErro</bpmn:incoming></bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_StartEvaluate_TaskDeterminarTipo" sourceRef="Start_Evaluate" targetRef="Task_DeterminarTipo"/>
     <bpmn:sequenceFlow id="Flow_TaskDeterminarTipo_GatewayTemDados" sourceRef="Task_DeterminarTipo" targetRef="Gateway_TemDados"/>
@@ -46,6 +46,10 @@
     <bpmn:sequenceFlow id="Flow_BoundaryErroAbrir_TaskRegistrarFalha" sourceRef="Boundary_ErroAbrir" targetRef="Task_RegistrarFalha"/>
     <bpmn:sequenceFlow id="Flow_BoundaryErroResolver_TaskRegistrarFalha" sourceRef="Boundary_ErroResolver" targetRef="Task_RegistrarFalha"/>
     <bpmn:sequenceFlow id="Flow_TaskRegistrarFalha_EndErro" sourceRef="Task_RegistrarFalha" targetRef="End_Erro"/>
+    <bpmn:boundaryEvent id="Boundary_DB_DP007_Task_ConsultarAberto" name="Falha de banco" attachedToRef="Task_ConsultarAberto" cancelActivity="true"><bpmn:outgoing>Flow_DP007_DB_Task_ConsultarAberto</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_DB_DP007_Task_ConsultarAberto" errorRef="Error_avaliacao-alertas"/></bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_DP007_DB_Task_ConsultarAberto" sourceRef="Boundary_DB_DP007_Task_ConsultarAberto" targetRef="Task_RegistrarFalha"/>
+    <bpmn:boundaryEvent id="Boundary_DB_DP007_Task_ConsultarNormal" name="Falha de banco" attachedToRef="Task_ConsultarNormal" cancelActivity="true"><bpmn:outgoing>Flow_DP007_DB_Task_ConsultarNormal</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_DB_DP007_Task_ConsultarNormal" errorRef="Error_avaliacao-alertas"/></bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_DP007_DB_Task_ConsultarNormal" sourceRef="Boundary_DB_DP007_Task_ConsultarNormal" targetRef="Task_RegistrarFalha"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="Diagram_avaliacao-alertas">
     <bpmndi:BPMNPlane id="Plane_avaliacao-alertas" bpmnElement="Collaboration_avaliacao-alertas">
@@ -94,6 +98,10 @@
       <bpmndi:BPMNEdge id="Edge_Flow_BoundaryErroResolver_TaskRegistrarFalha" bpmnElement="Flow_BoundaryErroResolver_TaskRegistrarFalha"><di:waypoint x="1253" y="736"/><di:waypoint x="1253" y="794"/><di:waypoint x="1470" y="794"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_TaskRegistrarFalha_EndErro" bpmnElement="Flow_TaskRegistrarFalha_EndErro"><di:waypoint x="1680" y="794"/><di:waypoint x="1705" y="794"/><di:waypoint x="1705" y="795"/><di:waypoint x="1730" y="795"/></bpmndi:BPMNEdge>
       
+      <bpmndi:BPMNShape id="Shape_Boundary_DB_DP007_Task_ConsultarAberto" bpmnElement="Boundary_DB_DP007_Task_ConsultarAberto"><dc:Bounds x="868" y="505" width="32" height="32"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_DP007_DB_Task_ConsultarAberto" bpmnElement="Flow_DP007_DB_Task_ConsultarAberto"><di:waypoint x="884" y="537"/><di:waypoint x="884" y="602"/><di:waypoint x="1440" y="602"/><di:waypoint x="1440" y="794"/><di:waypoint x="1470" y="794"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_Boundary_DB_DP007_Task_ConsultarNormal" bpmnElement="Boundary_DB_DP007_Task_ConsultarNormal"><dc:Bounds x="868" y="712" width="32" height="32"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_DP007_DB_Task_ConsultarNormal" bpmnElement="Flow_DP007_DB_Task_ConsultarNormal"><di:waypoint x="884" y="744"/><di:waypoint x="884" y="824"/><di:waypoint x="1440" y="824"/><di:waypoint x="1440" y="794"/><di:waypoint x="1470" y="794"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
