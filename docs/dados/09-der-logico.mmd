@@ -1,7 +1,7 @@
 erDiagram
     DISPOSITIVO ||--o{ EVENTO : "registra"
     DISPOSITIVO ||--o{ ALERTA : "possui"
-    EVENTO o|--o{ ALERTA : "origina bateria baixa (opcional)"
+    EVENTO o|--o| ALERTA : "origina bateria baixa (opcional)"
 
     DISPOSITIVO {
         UUID id PK
