@@ -1,0 +1,31 @@
+erDiagram
+    DISPOSITIVO ||--o{ EVENTO : "registra"
+    DISPOSITIVO ||--o{ ALERTA : "possui"
+    EVENTO o|--o{ ALERTA : "origina bateria baixa (opcional)"
+
+    DISPOSITIVO {
+        UUID id PK
+        string codigo UK
+        string nome
+        enum comunicacao
+        integer ultima_bateria "opcional"
+        timestamp ultima_comunicacao "opcional"
+    }
+
+    EVENTO {
+        UUID event_id PK
+        UUID dispositivo_id FK
+        timestamp ocorrido_em
+        timestamp recebido_em
+        integer bateria_percentual
+    }
+
+    ALERTA {
+        UUID id PK
+        UUID dispositivo_id FK
+        enum tipo
+        timestamp aberto_em
+        timestamp reconhecido_em "opcional"
+        timestamp resolvido_em "opcional"
+        UUID evento_origem_id FK "opcional"
+    }
