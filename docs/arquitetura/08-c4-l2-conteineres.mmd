@@ -1,0 +1,21 @@
+flowchart LR
+    O(["Operador<br/>[Pessoa]"])
+    S["Simulador Node.js<br/>[Software de teste externo à aplicação web]"]
+
+    subgraph DP["Fronteira: DevicePulse [Sistema de software]"]
+        WEB["Aplicação web<br/>[React + Vite, SPA no navegador]<br/>Painel, listagem, histórico e alertas"]
+        API["API e verificador interno<br/>[Node.js + Express; processo único]<br/>REST, validação, regras, ciclo dos alertas<br/>Verificação de offline a cada 30 s"]
+        DB[("Banco de dados<br/>[PostgreSQL]<br/>devices, device_events e alerts")]
+    end
+
+    O -->|"Interface pelo navegador<br/>HTTPS em produção"| WEB
+    WEB <-->|"HTTP(S) / REST / JSON<br/>GET, POST, PATCH; consulta periódica"| API
+    S -->|"HTTP POST / JSON<br/>Evento simulado a cada 60 s"| API
+    API <-->|"SQL parametrizado / TCP<br/>transações e índices de unicidade"| DB
+
+    classDef actor fill:#f5f7fa,stroke:#64748b,color:#1f2937,stroke-width:2px;
+    classDef app fill:#edf6ff,stroke:#245a9a,color:#122d52,stroke-width:2px;
+    classDef data fill:#e8f4ee,stroke:#2e7654,color:#1f422e,stroke-width:2px;
+    class O,S actor;
+    class WEB,API app;
+    class DB data;
