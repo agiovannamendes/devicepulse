@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2020" height="1010" viewBox="0 0 2020 1010" role="img" aria-label="DP-006 | Avaliação automática, abertura e resolução"><defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0 0 L9 3.5 L0 7" fill="none" stroke="#1e293b" stroke-width="1.4"/></marker><style>text{font-family:Arial,Helvetica,sans-serif;fill:#1e293b}.lab{font-size:14px;dominant-baseline:middle;text-anchor:middle}.sublab{font-size:11px;dominant-baseline:middle;text-anchor:middle}.edge{fill:none;stroke:#1e293b;stroke-width:1.8;marker-end:url(#arrow)}.msg{stroke-dasharray:7 5;stroke:#2458a7}</style></defs><rect width="2020" height="1010" fill="#ffffff"/><text x="45" y="58" font-size="29" font-weight="bold">DP-006 | Avaliação automática, abertura e resolução</text><text x="45" y="92" font-size="15" fill="#2458a7">Resumo visual do processo BPMN 2.0 — diagrama editável em .bpmn</text><rect x="40" y="120" width="1920" height="840" fill="#fbfdff" stroke="#2458a7" stroke-width="2" rx="4"/><text x="58" y="148" font-size="17" fill="#2458a7" font-weight="bold">DevicePulse — processamento</text><path class="edge" d="M141 488 L195 488"/>
+<path class="edge" d="M380 488 L432 488"/>
+<path class="edge" d="M492 488 L523.5 488 L523.5 318 L555 318"/><text x="528.5" y="397" font-size="13" fill="#2458a7" font-weight="bold">Não</text>
+<path class="edge" d="M740 318 L790 318"/>
+<path class="edge" d="M492 488 L555 488"/><text x="523.5" y="475" font-size="13" fill="#2458a7" font-weight="bold">Sim</text>
+<path class="edge" d="M615 488 L662.5 488 L662.5 479 L710 479"/><text x="667.5" y="477.5" font-size="13" fill="#2458a7" font-weight="bold">Sim</text>
+<path class="edge" d="M898 479 L922 479 L922 482 L946 482"/>
+<path class="edge" d="M1006 482 L1045.5 482 L1045.5 330 L1085 330"/><text x="1050.5" y="400" font-size="13" fill="#2458a7" font-weight="bold">Sim</text>
+<path class="edge" d="M1269 330 L1302 330 L1302 328 L1335 328"/>
+<path class="edge" d="M1006 482 L1045.5 482 L1045.5 476 L1085 476"/><text x="1050.5" y="473" font-size="13" fill="#2458a7" font-weight="bold">Não</text>
+<path class="edge" d="M1275 476 L1305 476 L1305 475 L1335 475"/>
+<path class="edge" d="M615 488 L662.5 488 L662.5 686 L710 686"/><text x="667.5" y="581" font-size="13" fill="#2458a7" font-weight="bold">Não</text>
+<path class="edge" d="M898 686 L922 686 L922 685 L946 685"/>
+<path class="edge" d="M1006 685 L1045.5 685 L1045.5 686 L1085 686"/><text x="1050.5" y="679.5" font-size="13" fill="#2458a7" font-weight="bold">Sim</text>
+<path class="edge" d="M1275 686 L1305 686 L1305 682 L1335 682"/>
+<path class="edge" d="M1006 685 L1045.5 685 L1045.5 828 L1085 828"/><text x="1050.5" y="750.5" font-size="13" fill="#2458a7" font-weight="bold">Não</text>
+<path class="edge" d="M1275 828 L1305 828 L1305 827 L1335 827"/>
+<path class="edge" d="M1253 526 L1253 794 L1470 794"/>
+<path class="edge" d="M1253 736 L1253 794 L1470 794"/>
+<path class="edge" d="M1680 794 L1705 794 L1705 795 L1730 795"/><g><circle cx="123" cy="488" r="16" fill="white" stroke="#1e293b" stroke-width="2"/><text class="sublab" x="123" y="523">Avaliação iniciada</text></g>
+<g><rect x="195" y="447" width="185" height="82" rx="11" fill="#f4f8ff" stroke="#1e293b" stroke-width="1.8"/><text class="lab" x="287.5" y="479">Determinar dispositivo,</text><text class="lab" x="287.5" y="497">tipo e estado</text></g>
+<g><polygon points="462,458 492,488 462,518 432,488" fill="white" stroke="#1e293b" stroke-width="2"/><path d="M453 479 L471 497 M471 479 L453 497" stroke="#1e293b" stroke-width="2.5"/><text class="sublab" x="462" y="535">Há dados válidos?</text></g>
+<g><rect x="555" y="278" width="185" height="80" rx="11" fill="#f4f8ff" stroke="#1e293b" stroke-width="1.8"/><text class="lab" x="647.5" y="309">Manter SEM_DADOS sem</text><text class="lab" x="647.5" y="327">abrir alerta</text></g>
+<g><circle cx="808" cy="318" r="16" fill="white" stroke="#1e293b" stroke-width="4"/><text class="sublab" x="808" y="353">Sem ocorrência</text></g>
+<g><polygon points="585,458 615,488 585,518 555,488" fill="white" stroke="#1e293b" stroke-width="2"/><path d="M576 479 L594 497 M594 479 L576 497" stroke="#1e293b" stroke-width="2.5"/><text class="sublab" x="585" y="535">Condição de falha</text><text class="sublab" x="585" y="551">ativa?</text></g>
+<g><rect x="710" y="438" width="188" height="82" rx="11" fill="#f4f8ff" stroke="#1e293b" stroke-width="1.8"/><text class="lab" x="804" y="470">Consultar alerta aberto</text><text class="lab" x="804" y="488">do tipo</text></g>
+<g><polygon points="976,452 1006,482 976,512 946,482" fill="white" stroke="#1e293b" stroke-width="2"/><path d="M967 473 L985 491 M985 473 L967 491" stroke="#1e293b" stroke-width="2.5"/><text class="sublab" x="976" y="529">Alerta aberto?</text></g>
+<g><rect x="1085" y="290" width="184" height="80" rx="11" fill="#f4f8ff" stroke="#1e293b" stroke-width="1.8"/><text class="lab" x="1177" y="321">Preservar alerta sem</text><text class="lab" x="1177" y="339">duplicar</text></g>
+<g><circle cx="1353" cy="328" r="16" fill="white" stroke="#1e293b" stroke-width="4"/><text class="sublab" x="1353" y="363">Alerta preservado</text></g>
+<g><rect x="1085" y="435" width="190" height="82" rx="11" fill="#f4f8ff" stroke="#1e293b" stroke-width="1.8"/><text class="lab" x="1180" y="467">Abrir ocorrência com</text><text class="lab" x="1180" y="485">restrição única</text></g>
+<g><circle cx="1253" cy="508" r="16" fill="white" stroke="#1e293b" stroke-width="2"/><circle cx="1253" cy="508" r="12" fill="none" stroke="#1e293b" stroke-width="1"/><text class="sublab" x="1253" y="543">Falha na gravação</text></g>
+<g><circle cx="1353" cy="475" r="16" fill="white" stroke="#1e293b" stroke-width="4"/><text class="sublab" x="1353" y="510">Alerta aberto</text></g>
+<g><rect x="710" y="645" width="188" height="82" rx="11" fill="#f4f8ff" stroke="#1e293b" stroke-width="1.8"/><text class="lab" x="804" y="677">Consultar alerta ainda</text><text class="lab" x="804" y="695">aberto</text></g>
+<g><polygon points="976,655 1006,685 976,715 946,685" fill="white" stroke="#1e293b" stroke-width="2"/><path d="M967 676 L985 694 M985 676 L967 694" stroke="#1e293b" stroke-width="2.5"/><text class="sublab" x="976" y="732">Existe alerta aberto?</text></g>
+<g><rect x="1085" y="645" width="190" height="82" rx="11" fill="#f4f8ff" stroke="#1e293b" stroke-width="1.8"/><text class="lab" x="1180" y="677">Registrar resolução</text><text class="lab" x="1180" y="695">automática</text></g>
+<g><circle cx="1253" cy="718" r="16" fill="white" stroke="#1e293b" stroke-width="2"/><circle cx="1253" cy="718" r="12" fill="none" stroke="#1e293b" stroke-width="1"/><text class="sublab" x="1253" y="753">Falha na gravação</text></g>
+<g><circle cx="1353" cy="682" r="16" fill="white" stroke="#1e293b" stroke-width="4"/><text class="sublab" x="1353" y="717">Alerta resolvido</text></g>
+<g><rect x="1085" y="788" width="190" height="80" rx="11" fill="#f4f8ff" stroke="#1e293b" stroke-width="1.8"/><text class="lab" x="1180" y="819">Não há alerta a</text><text class="lab" x="1180" y="837">resolver</text></g>
+<g><circle cx="1353" cy="827" r="16" fill="white" stroke="#1e293b" stroke-width="4"/><text class="sublab" x="1353" y="862">Sem alteração</text></g>
+<g><rect x="1470" y="755" width="210" height="78" rx="11" fill="#f4f8ff" stroke="#1e293b" stroke-width="1.8"/><text class="lab" x="1575" y="785">Registrar falha; não</text><text class="lab" x="1575" y="803">confirmar alteração</text></g>
+<g><circle cx="1748" cy="795" r="16" fill="white" stroke="#1e293b" stroke-width="4"/><text class="sublab" x="1748" y="830">Falha tratada</text></g><text x="50" y="992" font-size="13" fill="#18744a">DevicePulse • Dados simulados • DP-006 • Prévia em SVG</text></svg>

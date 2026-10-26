@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_reconhecimento-alertas" targetNamespace="https://github.com/agiovannamendes/devicepulse/bpmn" exporter="DevicePulse" exporterVersion="1.0">
+  <bpmn:message id="Message_reconhecimento-alertas" name="Solicitação ao DevicePulse"/>
+  <bpmn:error id="Error_reconhecimento-alertas" name="Falha de persistência" errorCode="DB_WRITE_FAILURE"/>
+  <bpmn:collaboration id="Collaboration_reconhecimento-alertas"><bpmn:participant id="Actor_reconhecimento-alertas" name="Operador"/><bpmn:participant id="DevicePulse_reconhecimento-alertas" name="DevicePulse — processamento" processRef="Process_reconhecimento-alertas"/><bpmn:messageFlow id="MessageFlow_Request_reconhecimento-alertas" sourceRef="Actor_reconhecimento-alertas" targetRef="Start_Recognize"/><bpmn:messageFlow id="MessageFlow_Return_1" sourceRef="Task_Resp404" targetRef="Actor_reconhecimento-alertas"/><bpmn:messageFlow id="MessageFlow_Return_2" sourceRef="Task_Resp409" targetRef="Actor_reconhecimento-alertas"/><bpmn:messageFlow id="MessageFlow_Return_3" sourceRef="Task_RespIdempotente" targetRef="Actor_reconhecimento-alertas"/><bpmn:messageFlow id="MessageFlow_Return_4" sourceRef="Task_RespSucesso" targetRef="Actor_reconhecimento-alertas"/><bpmn:messageFlow id="MessageFlow_Return_5" sourceRef="Task_RespFalha" targetRef="Actor_reconhecimento-alertas"/></bpmn:collaboration>
+  <bpmn:process id="Process_reconhecimento-alertas" name="DP-006 | Reconhecimento de alerta pelo operador" isExecutable="false">
+    <bpmn:startEvent id="Start_Recognize" name="Solicitação de reconhecimento"><bpmn:outgoing>Flow_StartRecognize_TaskBuscarAlerta</bpmn:outgoing><bpmn:messageEventDefinition id="MessageDef_Start_Recognize" messageRef="Message_reconhecimento-alertas"/></bpmn:startEvent>
+    <bpmn:task id="Task_BuscarAlerta" name="Consultar ocorrência"><bpmn:incoming>Flow_StartRecognize_TaskBuscarAlerta</bpmn:incoming><bpmn:outgoing>Flow_TaskBuscarAlerta_GatewayEncontrou</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_Encontrou" name="Alerta existe?"><bpmn:incoming>Flow_TaskBuscarAlerta_GatewayEncontrou</bpmn:incoming><bpmn:outgoing>Flow_GatewayEncontrou_TaskResp404</bpmn:outgoing><bpmn:outgoing>Flow_GatewayEncontrou_TaskChecarAberto</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Task_Resp404" name="Responder: alerta inexistente (404)"><bpmn:incoming>Flow_GatewayEncontrou_TaskResp404</bpmn:incoming><bpmn:outgoing>Flow_TaskResp404_End404</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_404" name="Não encontrado"><bpmn:incoming>Flow_TaskResp404_End404</bpmn:incoming></bpmn:endEvent>
+    <bpmn:task id="Task_ChecarAberto" name="Verificar data de resolução"><bpmn:incoming>Flow_GatewayEncontrou_TaskChecarAberto</bpmn:incoming><bpmn:outgoing>Flow_TaskChecarAberto_GatewayAberto</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_Aberto" name="Ainda aberto?"><bpmn:incoming>Flow_TaskChecarAberto_GatewayAberto</bpmn:incoming><bpmn:outgoing>Flow_GatewayAberto_TaskResp409</bpmn:outgoing><bpmn:outgoing>Flow_GatewayAberto_TaskVerificarReconhecido</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Task_Resp409" name="Responder: já resolvido (409)"><bpmn:incoming>Flow_GatewayAberto_TaskResp409</bpmn:incoming><bpmn:outgoing>Flow_TaskResp409_End409</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_409" name="Reconhecimento negado"><bpmn:incoming>Flow_TaskResp409_End409</bpmn:incoming></bpmn:endEvent>
+    <bpmn:task id="Task_VerificarReconhecido" name="Verificar se já foi reconhecido"><bpmn:incoming>Flow_GatewayAberto_TaskVerificarReconhecido</bpmn:incoming><bpmn:outgoing>Flow_TaskVerificarReconhecido_GatewayJaReconhecido</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_JaReconhecido" name="Já reconhecido?"><bpmn:incoming>Flow_TaskVerificarReconhecido_GatewayJaReconhecido</bpmn:incoming><bpmn:outgoing>Flow_GatewayJaReconhecido_TaskRespIdempotente</bpmn:outgoing><bpmn:outgoing>Flow_GatewayJaReconhecido_TaskGravarAck</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Task_RespIdempotente" name="Responder: já reconhecido (200)"><bpmn:incoming>Flow_GatewayJaReconhecido_TaskRespIdempotente</bpmn:incoming><bpmn:outgoing>Flow_TaskRespIdempotente_End200</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_200" name="Sem duplicar ação"><bpmn:incoming>Flow_TaskRespIdempotente_End200</bpmn:incoming></bpmn:endEvent>
+    <bpmn:serviceTask id="Task_GravarAck" name="Registrar acknowledgedAt"><bpmn:incoming>Flow_GatewayJaReconhecido_TaskGravarAck</bpmn:incoming><bpmn:outgoing>Flow_TaskGravarAck_TaskRespSucesso</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Boundary_ErroAck" name="Falha na gravação" attachedToRef="Task_GravarAck" cancelActivity="true"><bpmn:outgoing>Flow_BoundaryErroAck_TaskRespFalha</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_ErroAck" errorRef="Error_reconhecimento-alertas"/></bpmn:boundaryEvent>
+    <bpmn:sendTask id="Task_RespSucesso" name="Responder: reconhecido (200)"><bpmn:incoming>Flow_TaskGravarAck_TaskRespSucesso</bpmn:incoming><bpmn:outgoing>Flow_TaskRespSucesso_EndSucesso</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_Sucesso" name="Reconhecido; falha pode continuar"><bpmn:incoming>Flow_TaskRespSucesso_EndSucesso</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sendTask id="Task_RespFalha" name="Responder: falha ao registrar (500)"><bpmn:incoming>Flow_BoundaryErroAck_TaskRespFalha</bpmn:incoming><bpmn:outgoing>Flow_TaskRespFalha_EndFalha</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_Falha" name="Não confirmado"><bpmn:incoming>Flow_TaskRespFalha_EndFalha</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_StartRecognize_TaskBuscarAlerta" sourceRef="Start_Recognize" targetRef="Task_BuscarAlerta"/>
+    <bpmn:sequenceFlow id="Flow_TaskBuscarAlerta_GatewayEncontrou" sourceRef="Task_BuscarAlerta" targetRef="Gateway_Encontrou"/>
+    <bpmn:sequenceFlow id="Flow_GatewayEncontrou_TaskResp404" sourceRef="Gateway_Encontrou" targetRef="Task_Resp404" name="Não"/>
+    <bpmn:sequenceFlow id="Flow_TaskResp404_End404" sourceRef="Task_Resp404" targetRef="End_404"/>
+    <bpmn:sequenceFlow id="Flow_GatewayEncontrou_TaskChecarAberto" sourceRef="Gateway_Encontrou" targetRef="Task_ChecarAberto" name="Sim"/>
+    <bpmn:sequenceFlow id="Flow_TaskChecarAberto_GatewayAberto" sourceRef="Task_ChecarAberto" targetRef="Gateway_Aberto"/>
+    <bpmn:sequenceFlow id="Flow_GatewayAberto_TaskResp409" sourceRef="Gateway_Aberto" targetRef="Task_Resp409" name="Não"/>
+    <bpmn:sequenceFlow id="Flow_TaskResp409_End409" sourceRef="Task_Resp409" targetRef="End_409"/>
+    <bpmn:sequenceFlow id="Flow_GatewayAberto_TaskVerificarReconhecido" sourceRef="Gateway_Aberto" targetRef="Task_VerificarReconhecido" name="Sim"/>
+    <bpmn:sequenceFlow id="Flow_TaskVerificarReconhecido_GatewayJaReconhecido" sourceRef="Task_VerificarReconhecido" targetRef="Gateway_JaReconhecido"/>
+    <bpmn:sequenceFlow id="Flow_GatewayJaReconhecido_TaskRespIdempotente" sourceRef="Gateway_JaReconhecido" targetRef="Task_RespIdempotente" name="Sim"/>
+    <bpmn:sequenceFlow id="Flow_TaskRespIdempotente_End200" sourceRef="Task_RespIdempotente" targetRef="End_200"/>
+    <bpmn:sequenceFlow id="Flow_GatewayJaReconhecido_TaskGravarAck" sourceRef="Gateway_JaReconhecido" targetRef="Task_GravarAck" name="Não"/>
+    <bpmn:sequenceFlow id="Flow_TaskGravarAck_TaskRespSucesso" sourceRef="Task_GravarAck" targetRef="Task_RespSucesso"/>
+    <bpmn:sequenceFlow id="Flow_TaskRespSucesso_EndSucesso" sourceRef="Task_RespSucesso" targetRef="End_Sucesso"/>
+    <bpmn:sequenceFlow id="Flow_BoundaryErroAck_TaskRespFalha" sourceRef="Boundary_ErroAck" targetRef="Task_RespFalha"/>
+    <bpmn:sequenceFlow id="Flow_TaskRespFalha_EndFalha" sourceRef="Task_RespFalha" targetRef="End_Falha"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_reconhecimento-alertas">
+    <bpmndi:BPMNPlane id="Plane_reconhecimento-alertas" bpmnElement="Collaboration_reconhecimento-alertas">
+      <bpmndi:BPMNShape id="Shape_Actor_reconhecimento-alertas" bpmnElement="Actor_reconhecimento-alertas" isHorizontal="true"><dc:Bounds x="35" y="120" width="1940" height="110"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_DevicePulse_reconhecimento-alertas" bpmnElement="DevicePulse_reconhecimento-alertas" isHorizontal="true"><dc:Bounds x="35" y="280" width="1940" height="700"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Start_Recognize" bpmnElement="Start_Recognize"><dc:Bounds x="85" y="575" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_BuscarAlerta" bpmnElement="Task_BuscarAlerta"><dc:Bounds x="175" y="556" width="174" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_Encontrou" bpmnElement="Gateway_Encontrou" isMarkerVisible="true"><dc:Bounds x="405" y="566" width="60" height="60"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Resp404" bpmnElement="Task_Resp404"><dc:Bounds x="530" y="380" width="185" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_404" bpmnElement="End_404"><dc:Bounds x="780" y="398" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_ChecarAberto" bpmnElement="Task_ChecarAberto"><dc:Bounds x="530" y="554" width="185" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_Aberto" bpmnElement="Gateway_Aberto" isMarkerVisible="true"><dc:Bounds x="770" y="565" width="60" height="60"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Resp409" bpmnElement="Task_Resp409"><dc:Bounds x="900" y="380" width="185" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_409" bpmnElement="End_409"><dc:Bounds x="1145" y="398" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_VerificarReconhecido" bpmnElement="Task_VerificarReconhecido"><dc:Bounds x="900" y="553" width="185" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_JaReconhecido" bpmnElement="Gateway_JaReconhecido" isMarkerVisible="true"><dc:Bounds x="1140" y="565" width="60" height="60"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_RespIdempotente" bpmnElement="Task_RespIdempotente"><dc:Bounds x="1270" y="380" width="185" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_200" bpmnElement="End_200"><dc:Bounds x="1510" y="398" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_GravarAck" bpmnElement="Task_GravarAck"><dc:Bounds x="1270" y="553" width="185" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Boundary_ErroAck" bpmnElement="Boundary_ErroAck"><dc:Bounds x="1420" y="610" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_RespSucesso" bpmnElement="Task_RespSucesso"><dc:Bounds x="1510" y="553" width="185" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Sucesso" bpmnElement="End_Sucesso"><dc:Bounds x="1750" y="574" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_RespFalha" bpmnElement="Task_RespFalha"><dc:Bounds x="1510" y="790" width="190" height="75"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Falha" bpmnElement="End_Falha"><dc:Bounds x="1750" y="807" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_StartRecognize_TaskBuscarAlerta" bpmnElement="Flow_StartRecognize_TaskBuscarAlerta"><di:waypoint x="121" y="593"/><di:waypoint x="148" y="593"/><di:waypoint x="148" y="596"/><di:waypoint x="175" y="596"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskBuscarAlerta_GatewayEncontrou" bpmnElement="Flow_TaskBuscarAlerta_GatewayEncontrou"><di:waypoint x="349" y="596"/><di:waypoint x="405" y="596"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayEncontrou_TaskResp404" bpmnElement="Flow_GatewayEncontrou_TaskResp404"><di:waypoint x="465" y="596"/><di:waypoint x="498" y="596"/><di:waypoint x="498" y="418"/><di:waypoint x="530" y="418"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskResp404_End404" bpmnElement="Flow_TaskResp404_End404"><di:waypoint x="715" y="418"/><di:waypoint x="748" y="418"/><di:waypoint x="748" y="416"/><di:waypoint x="780" y="416"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayEncontrou_TaskChecarAberto" bpmnElement="Flow_GatewayEncontrou_TaskChecarAberto"><di:waypoint x="465" y="596"/><di:waypoint x="498" y="596"/><di:waypoint x="498" y="594"/><di:waypoint x="530" y="594"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskChecarAberto_GatewayAberto" bpmnElement="Flow_TaskChecarAberto_GatewayAberto"><di:waypoint x="715" y="594"/><di:waypoint x="743" y="594"/><di:waypoint x="743" y="595"/><di:waypoint x="770" y="595"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayAberto_TaskResp409" bpmnElement="Flow_GatewayAberto_TaskResp409"><di:waypoint x="830" y="595"/><di:waypoint x="865" y="595"/><di:waypoint x="865" y="418"/><di:waypoint x="900" y="418"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskResp409_End409" bpmnElement="Flow_TaskResp409_End409"><di:waypoint x="1085" y="418"/><di:waypoint x="1115" y="418"/><di:waypoint x="1115" y="416"/><di:waypoint x="1145" y="416"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayAberto_TaskVerificarReconhecido" bpmnElement="Flow_GatewayAberto_TaskVerificarReconhecido"><di:waypoint x="830" y="595"/><di:waypoint x="865" y="595"/><di:waypoint x="865" y="593"/><di:waypoint x="900" y="593"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskVerificarReconhecido_GatewayJaReconhecido" bpmnElement="Flow_TaskVerificarReconhecido_GatewayJaReconhecido"><di:waypoint x="1085" y="593"/><di:waypoint x="1113" y="593"/><di:waypoint x="1113" y="595"/><di:waypoint x="1140" y="595"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayJaReconhecido_TaskRespIdempotente" bpmnElement="Flow_GatewayJaReconhecido_TaskRespIdempotente"><di:waypoint x="1200" y="595"/><di:waypoint x="1235" y="595"/><di:waypoint x="1235" y="418"/><di:waypoint x="1270" y="418"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskRespIdempotente_End200" bpmnElement="Flow_TaskRespIdempotente_End200"><di:waypoint x="1455" y="418"/><di:waypoint x="1483" y="418"/><di:waypoint x="1483" y="416"/><di:waypoint x="1510" y="416"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayJaReconhecido_TaskGravarAck" bpmnElement="Flow_GatewayJaReconhecido_TaskGravarAck"><di:waypoint x="1200" y="595"/><di:waypoint x="1235" y="595"/><di:waypoint x="1235" y="593"/><di:waypoint x="1270" y="593"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskGravarAck_TaskRespSucesso" bpmnElement="Flow_TaskGravarAck_TaskRespSucesso"><di:waypoint x="1455" y="593"/><di:waypoint x="1510" y="593"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskRespSucesso_EndSucesso" bpmnElement="Flow_TaskRespSucesso_EndSucesso"><di:waypoint x="1695" y="593"/><di:waypoint x="1723" y="593"/><di:waypoint x="1723" y="592"/><di:waypoint x="1750" y="592"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_BoundaryErroAck_TaskRespFalha" bpmnElement="Flow_BoundaryErroAck_TaskRespFalha"><di:waypoint x="1438" y="646"/><di:waypoint x="1438" y="828"/><di:waypoint x="1510" y="828"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskRespFalha_EndFalha" bpmnElement="Flow_TaskRespFalha_EndFalha"><di:waypoint x="1700" y="828"/><di:waypoint x="1725" y="828"/><di:waypoint x="1725" y="825"/><di:waypoint x="1750" y="825"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_MessageFlow_Request_reconhecimento-alertas" bpmnElement="MessageFlow_Request_reconhecimento-alertas"><di:waypoint x="110" y="230"/><di:waypoint x="103" y="575"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="Edge_MessageFlow_Return_1" bpmnElement="MessageFlow_Return_1"><di:waypoint x="622.5" y="380"/><di:waypoint x="622.5" y="230"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="Edge_MessageFlow_Return_2" bpmnElement="MessageFlow_Return_2"><di:waypoint x="992.5" y="380"/><di:waypoint x="992.5" y="230"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="Edge_MessageFlow_Return_3" bpmnElement="MessageFlow_Return_3"><di:waypoint x="1362.5" y="380"/><di:waypoint x="1362.5" y="230"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="Edge_MessageFlow_Return_4" bpmnElement="MessageFlow_Return_4"><di:waypoint x="1602.5" y="553"/><di:waypoint x="1602.5" y="230"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="Edge_MessageFlow_Return_5" bpmnElement="MessageFlow_Return_5"><di:waypoint x="1605" y="790"/><di:waypoint x="1605" y="230"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
