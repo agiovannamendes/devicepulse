@@ -1,7 +1,7 @@
 # DP-008 — Registros de Decisão Arquitetural (ADR)
 
-**Versão:** 0.1  
-**Estado de todos os ADRs:** Propostos, pendentes de aprovação do DP-008  
+**Versão:** 1.0  
+**Estado de todos os ADRs:** Aprovados em 26/10/2026 (DP-008)  
 **Escopo:** DevicePulse — MVP com dispositivos e eventos exclusivamente fictícios
 
 Uma *Architecture Decision Record* (ADR) registra o contexto da escolha, a decisão, suas consequências e opções rejeitadas. A aprovação deste documento indica que essas decisões passam a orientar arquitetura, API, banco, testes e implantação do MVP. Mudanças futuras devem ser registradas como novas decisões ou revisões explícitas.
@@ -10,7 +10,7 @@ Uma *Architecture Decision Record* (ADR) registra o contexto da escolha, a decis
 
 **Contexto:** as funcionalidades de cadastro, ingestão de eventos, estados de dispositivos e alertas compartilham regras e a mesma base transacional. O MVP possui escopo limitado e não prevê escalabilidade de produção.
 
-**Decisão proposta:** implementar uma aplicação Node.js + Express organizada em módulos por domínio/responsabilidade (rotas, validações, serviços/regras, repositórios e tarefas agendadas). Manter **um processo backend no MVP**. O verificador periódico de offline roda nesse processo, compartilhando os serviços de regras.
+**Decisão aprovada:** implementar uma aplicação Node.js + Express organizada em módulos por domínio/responsabilidade (rotas, validações, serviços/regras, repositórios e tarefas agendadas). Manter **um processo backend no MVP**. O verificador periódico de offline roda nesse processo, compartilhando os serviços de regras.
 
 **Alternativas consideradas:** microserviços independentes; serviços separados para ingestão e alertas; função serverless para cada operação.
 
@@ -30,7 +30,7 @@ Uma *Architecture Decision Record* (ADR) registra o contexto da escolha, a decis
 
 **Contexto:** eventos precisam manter histórico; alertas não podem duplicar para o mesmo dispositivo e tipo enquanto estiverem abertos; o processamento inclui comparações temporais e atualizações relacionadas.
 
-**Decisão proposta:** usar um PostgreSQL único, com acesso restrito ao backend. Aplicar **chaves estrangeiras**, restrições de identidade/uniquidade, SQL parametrizado e transações no processamento de eventos, estados e alertas. A estratégia exata de migrações e tabelas será concluída no DP-009.
+**Decisão aprovada:** usar um PostgreSQL único, com acesso restrito ao backend. Aplicar **chaves estrangeiras**, restrições de identidade/uniquidade, SQL parametrizado e transações no processamento de eventos, estados e alertas. A estratégia exata de migrações e tabelas será concluída no DP-009.
 
 **Alternativas:** armazenamento apenas em memória; arquivos JSON; banco NoSQL sem relações explícitas; bancos separados para cada módulo.
 
@@ -49,7 +49,7 @@ Uma *Architecture Decision Record* (ADR) registra o contexto da escolha, a decis
 
 **Contexto:** o dashboard precisa apresentar status e alertas atualizados, mas não é necessário tempo real estrito para uma demonstração com aproximadamente até 100 dispositivos.
 
-**Decisão proposta:** a SPA React realiza consultas REST ao backend, em **intervalos configuráveis** para os indicadores e alertas, além de requisições após ações do operador. O simulador envia eventos para a **mesma API REST**. Não incluir WebSockets na primeira versão.
+**Decisão aprovada:** a SPA React realiza consultas REST ao backend, em **intervalos configuráveis** para os indicadores e alertas, além de requisições após ações do operador. O simulador envia eventos para a **mesma API REST**. Não incluir WebSockets na primeira versão.
 
 **Alternativas:** WebSockets, Server-Sent Events (SSE), comunicação direta navegador–PostgreSQL.
 
@@ -69,7 +69,7 @@ Uma *Architecture Decision Record* (ADR) registra o contexto da escolha, a decis
 
 **Contexto:** o MVP não usa hardware. Deve ser possível reproduzir eventos normais, bateria baixa, falha de comunicação e retorno ao estado conectado.
 
-**Decisão proposta:** criar um **simulador executado separadamente (Node.js CLI)** que faz POST JSON para o endpoint de ingestão do backend, normalmente a cada **60 segundos por dispositivo**. O verificador de offline permanece **interno ao backend**, realizando a checagem proposta a cada **30 segundos**.
+**Decisão aprovada:** criar um **simulador executado separadamente (Node.js CLI)** que faz POST JSON para o endpoint de ingestão do backend, normalmente a cada **60 segundos por dispositivo**. O verificador de offline permanece **interno ao backend**, realizando a checagem proposta a cada **30 segundos**.
 
 **Alternativas:** simulador com acesso direto ao banco; eventos gravados manualmente na UI; rotina de offline dentro do navegador; broker de mensagens.
 
@@ -88,7 +88,7 @@ Uma *Architecture Decision Record* (ADR) registra o contexto da escolha, a decis
 
 **Contexto:** o MVP não possui autenticação multiusuário. Uma API de escrita aberta na internet permitiria cadastros, simulações e reconhecimento indevidos.
 
-**Decisão proposta:** desenvolvimento e demonstração inicial **locais**, com segredos em variáveis de ambiente fora do Git e dados exclusivamente fictícios. Qualquer hospedagem pública deverá passar por revisão de segurança; preferir apresentação somente leitura ou adicionar controles adequados para operações de escrita.
+**Decisão aprovada:** desenvolvimento e demonstração inicial **locais**, com segredos em variáveis de ambiente fora do Git e dados exclusivamente fictícios. Qualquer hospedagem pública deverá passar por revisão de segurança; preferir apresentação somente leitura ou adicionar controles adequados para operações de escrita.
 
 **Alternativas:** liberar livremente endpoints de escrita no ambiente público; implementar autenticação avançada no MVP.
 
@@ -103,6 +103,6 @@ Uma *Architecture Decision Record* (ADR) registra o contexto da escolha, a decis
 
 ## Situação e próximos passos
 
-Todos os ADRs acima estão **propostos**. Os detalhes finais de esquema SQL, índices e migrações serão acordados no DP-009; endpoints e esquemas de erro, no DP-010; estrutura interna dos serviços e sequência de processamento, no trabalho posterior de arquitetura/componentes e implementação.
+Todos os ADRs acima estão **aprovados para o MVP**. Os detalhes finais de esquema SQL, índices e migrações serão acordados no DP-009; endpoints e esquemas de erro, no DP-010; estrutura interna dos serviços e sequência de processamento, no trabalho posterior de arquitetura/componentes e implementação.
 
-**Aprovação pendente:** confirmar se a separação de responsabilidades, a persistência, a estratégia de atualização do painel e os limites de hospedagem atendem ao DevicePulse.
+**Aprovação registrada:** a separação de responsabilidades, a persistência, a estratégia de atualização do painel e os limites de hospedagem foram aceitos no DP-008. Mudanças posteriores deverão ser documentadas e ter seu impacto reavaliado.
