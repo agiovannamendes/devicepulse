@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_ingestao" targetNamespace="https://github.com/agiovannamendes/devicepulse/bpmn" exporter="DevicePulse" exporterVersion="1.0">
+  <bpmn:message id="Message_ingestao" name="Solicitação enviada ao DevicePulse"/>
+  <bpmn:error id="Error_ingestao" name="Falha ao persistir no banco" errorCode="DATABASE_ERROR"/>
+  <bpmn:collaboration id="Collaboration_ingestao"><bpmn:participant id="Participant_Actor_ingestao" name="Simulador de dispositivos"/><bpmn:participant id="Participant_System_ingestao" name="DevicePulse — API e regras" processRef="Process_ingestao"/><bpmn:messageFlow id="MessageFlow_Request_ingestao" sourceRef="Participant_Actor_ingestao" targetRef="Start_Evento"/><bpmn:messageFlow id="MessageFlow_Response_ingestao_1" sourceRef="Task_Resp400" targetRef="Participant_Actor_ingestao"/><bpmn:messageFlow id="MessageFlow_Response_ingestao_2" sourceRef="Task_Resp404" targetRef="Participant_Actor_ingestao"/><bpmn:messageFlow id="MessageFlow_Response_ingestao_3" sourceRef="Task_Resp200" targetRef="Participant_Actor_ingestao"/><bpmn:messageFlow id="MessageFlow_Response_ingestao_4" sourceRef="Task_Resp409" targetRef="Participant_Actor_ingestao"/><bpmn:messageFlow id="MessageFlow_Response_ingestao_5" sourceRef="Task_Resp500" targetRef="Participant_Actor_ingestao"/><bpmn:messageFlow id="MessageFlow_Response_ingestao_6" sourceRef="Task_Resp201Historico" targetRef="Participant_Actor_ingestao"/><bpmn:messageFlow id="MessageFlow_Response_ingestao_7" sourceRef="Task_Resp201" targetRef="Participant_Actor_ingestao"/></bpmn:collaboration>
+  <bpmn:process id="Process_ingestao" name="Recebimento e processamento de evento" isExecutable="false">
+    <bpmn:startEvent id="Start_Evento" name="Evento recebido"><bpmn:outgoing>Flow_Ing_01</bpmn:outgoing><bpmn:messageEventDefinition id="MsgEvt_Start_Evento" messageRef="Message_ingestao"/></bpmn:startEvent>
+    <bpmn:task id="Task_ValidarEvento" name="Validar campos, data e bateria"><bpmn:incoming>Flow_Ing_01</bpmn:incoming><bpmn:outgoing>Flow_Ing_02</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_EventoValido" name="Evento válido?"><bpmn:incoming>Flow_Ing_02</bpmn:incoming><bpmn:outgoing>Flow_Ing_03</bpmn:outgoing><bpmn:outgoing>Flow_Ing_05</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Task_Resp400" name="Responder: evento inválido"><bpmn:incoming>Flow_Ing_03</bpmn:incoming><bpmn:outgoing>Flow_Ing_04</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_400" name="Rejeitado (400)"><bpmn:incoming>Flow_Ing_04</bpmn:incoming></bpmn:endEvent>
+    <bpmn:task id="Task_LocalizarDispositivo" name="Localizar dispositivo"><bpmn:incoming>Flow_Ing_05</bpmn:incoming><bpmn:outgoing>Flow_Ing_06</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_ExisteDispositivo" name="Existe dispositivo?"><bpmn:incoming>Flow_Ing_06</bpmn:incoming><bpmn:outgoing>Flow_Ing_07</bpmn:outgoing><bpmn:outgoing>Flow_Ing_09</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Task_Resp404" name="Responder: não encontrado"><bpmn:incoming>Flow_Ing_07</bpmn:incoming><bpmn:outgoing>Flow_Ing_08</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_404" name="Rejeitado (404)"><bpmn:incoming>Flow_Ing_08</bpmn:incoming></bpmn:endEvent>
+    <bpmn:task id="Task_ConferirEventId" name="Consultar eventId"><bpmn:incoming>Flow_Ing_09</bpmn:incoming><bpmn:outgoing>Flow_Ing_10</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_EventIdExistente" name="eventId já existe?"><bpmn:incoming>Flow_Ing_10</bpmn:incoming><bpmn:outgoing>Flow_Ing_11</bpmn:outgoing><bpmn:outgoing>Flow_Ing_16</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_MesmoConteudo" name="Conteúdo idêntico?"><bpmn:incoming>Flow_Ing_11</bpmn:incoming><bpmn:outgoing>Flow_Ing_12</bpmn:outgoing><bpmn:outgoing>Flow_Ing_14</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Task_Resp200" name="Responder: já processado"><bpmn:incoming>Flow_Ing_12</bpmn:incoming><bpmn:outgoing>Flow_Ing_13</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_200" name="Sem duplicar (200)"><bpmn:incoming>Flow_Ing_13</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sendTask id="Task_Resp409" name="Responder: conflito de eventId"><bpmn:incoming>Flow_Ing_14</bpmn:incoming><bpmn:outgoing>Flow_Ing_15</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_409" name="Conflito (409)"><bpmn:incoming>Flow_Ing_15</bpmn:incoming></bpmn:endEvent>
+    <bpmn:serviceTask id="Task_PersistirEvento" name="Gravar evento e recebimento"><bpmn:incoming>Flow_Ing_16</bpmn:incoming><bpmn:outgoing>Flow_Ing_17</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Boundary_ErroPersistenciaEvento" name="Falha de persistência" attachedToRef="Task_PersistirEvento" cancelActivity="true"><bpmn:outgoing>Flow_Ing_18</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorEvt_Boundary_ErroPersistenciaEvento" errorRef="Error_ingestao"/></bpmn:boundaryEvent>
+    <bpmn:sendTask id="Task_Resp500" name="Responder: falha interna"><bpmn:incoming>Flow_Ing_18</bpmn:incoming><bpmn:outgoing>Flow_Ing_19</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_500" name="Falha (500)"><bpmn:incoming>Flow_Ing_19</bpmn:incoming></bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_EventoMaisRecente" name="Mais recente?"><bpmn:incoming>Flow_Ing_17</bpmn:incoming><bpmn:outgoing>Flow_Ing_20</bpmn:outgoing><bpmn:outgoing>Flow_Ing_22</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Task_Resp201Historico" name="Responder: registrado no histórico"><bpmn:incoming>Flow_Ing_20</bpmn:incoming><bpmn:outgoing>Flow_Ing_21</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_201Historico" name="Histórico preservado (201)"><bpmn:incoming>Flow_Ing_21</bpmn:incoming></bpmn:endEvent>
+    <bpmn:task id="Task_AvaliarEstado" name="Avaliar estado e condições"><bpmn:incoming>Flow_Ing_22</bpmn:incoming><bpmn:outgoing>Flow_Ing_23</bpmn:outgoing></bpmn:task>
+    <bpmn:sendTask id="Task_Resp201" name="Responder: evento aceito"><bpmn:incoming>Flow_Ing_23</bpmn:incoming><bpmn:outgoing>Flow_Ing_24</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_201" name="Processado (201)"><bpmn:incoming>Flow_Ing_24</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Ing_01" sourceRef="Start_Evento" targetRef="Task_ValidarEvento" />
+    <bpmn:sequenceFlow id="Flow_Ing_02" sourceRef="Task_ValidarEvento" targetRef="Gateway_EventoValido" />
+    <bpmn:sequenceFlow id="Flow_Ing_03" sourceRef="Gateway_EventoValido" targetRef="Task_Resp400" name="Não" />
+    <bpmn:sequenceFlow id="Flow_Ing_04" sourceRef="Task_Resp400" targetRef="End_400" />
+    <bpmn:sequenceFlow id="Flow_Ing_05" sourceRef="Gateway_EventoValido" targetRef="Task_LocalizarDispositivo" name="Sim" />
+    <bpmn:sequenceFlow id="Flow_Ing_06" sourceRef="Task_LocalizarDispositivo" targetRef="Gateway_ExisteDispositivo" />
+    <bpmn:sequenceFlow id="Flow_Ing_07" sourceRef="Gateway_ExisteDispositivo" targetRef="Task_Resp404" name="Não" />
+    <bpmn:sequenceFlow id="Flow_Ing_08" sourceRef="Task_Resp404" targetRef="End_404" />
+    <bpmn:sequenceFlow id="Flow_Ing_09" sourceRef="Gateway_ExisteDispositivo" targetRef="Task_ConferirEventId" name="Sim" />
+    <bpmn:sequenceFlow id="Flow_Ing_10" sourceRef="Task_ConferirEventId" targetRef="Gateway_EventIdExistente" />
+    <bpmn:sequenceFlow id="Flow_Ing_11" sourceRef="Gateway_EventIdExistente" targetRef="Gateway_MesmoConteudo" name="Sim" />
+    <bpmn:sequenceFlow id="Flow_Ing_12" sourceRef="Gateway_MesmoConteudo" targetRef="Task_Resp200" name="Sim" />
+    <bpmn:sequenceFlow id="Flow_Ing_13" sourceRef="Task_Resp200" targetRef="End_200" />
+    <bpmn:sequenceFlow id="Flow_Ing_14" sourceRef="Gateway_MesmoConteudo" targetRef="Task_Resp409" name="Não" />
+    <bpmn:sequenceFlow id="Flow_Ing_15" sourceRef="Task_Resp409" targetRef="End_409" />
+    <bpmn:sequenceFlow id="Flow_Ing_16" sourceRef="Gateway_EventIdExistente" targetRef="Task_PersistirEvento" name="Não" />
+    <bpmn:sequenceFlow id="Flow_Ing_17" sourceRef="Task_PersistirEvento" targetRef="Gateway_EventoMaisRecente" />
+    <bpmn:sequenceFlow id="Flow_Ing_18" sourceRef="Boundary_ErroPersistenciaEvento" targetRef="Task_Resp500" />
+    <bpmn:sequenceFlow id="Flow_Ing_19" sourceRef="Task_Resp500" targetRef="End_500" />
+    <bpmn:sequenceFlow id="Flow_Ing_20" sourceRef="Gateway_EventoMaisRecente" targetRef="Task_Resp201Historico" name="Não" />
+    <bpmn:sequenceFlow id="Flow_Ing_21" sourceRef="Task_Resp201Historico" targetRef="End_201Historico" />
+    <bpmn:sequenceFlow id="Flow_Ing_22" sourceRef="Gateway_EventoMaisRecente" targetRef="Task_AvaliarEstado" name="Sim" />
+    <bpmn:sequenceFlow id="Flow_Ing_23" sourceRef="Task_AvaliarEstado" targetRef="Task_Resp201" />
+    <bpmn:sequenceFlow id="Flow_Ing_24" sourceRef="Task_Resp201" targetRef="End_201" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_ingestao">
+    <bpmndi:BPMNPlane id="Plane_ingestao" bpmnElement="Collaboration_ingestao">
+      <bpmndi:BPMNShape id="Shape_Actor_ingestao" bpmnElement="Participant_Actor_ingestao" isHorizontal="true"><dc:Bounds x="40" y="60" width="2240" height="105"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_System_ingestao" bpmnElement="Participant_System_ingestao" isHorizontal="true"><dc:Bounds x="40" y="195" width="2240" height="680"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Start_Evento" bpmnElement="Start_Evento"><dc:Bounds x="90" y="474" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_ValidarEvento" bpmnElement="Task_ValidarEvento"><dc:Bounds x="170" y="455" width="158" height="74"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Gateway_EventoValido" bpmnElement="Gateway_EventoValido" isMarkerVisible="true"><dc:Bounds x="378" y="465" width="54" height="54"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_Resp400" bpmnElement="Task_Resp400"><dc:Bounds x="505" y="285" width="172" height="68"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_400" bpmnElement="End_400"><dc:Bounds x="740" y="300" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_LocalizarDispositivo" bpmnElement="Task_LocalizarDispositivo"><dc:Bounds x="505" y="455" width="172" height="74"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Gateway_ExisteDispositivo" bpmnElement="Gateway_ExisteDispositivo" isMarkerVisible="true"><dc:Bounds x="740" y="465" width="54" height="54"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_Resp404" bpmnElement="Task_Resp404"><dc:Bounds x="860" y="285" width="178" height="68"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_404" bpmnElement="End_404"><dc:Bounds x="1100" y="300" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_ConferirEventId" bpmnElement="Task_ConferirEventId"><dc:Bounds x="860" y="455" width="178" height="74"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Gateway_EventIdExistente" bpmnElement="Gateway_EventIdExistente" isMarkerVisible="true"><dc:Bounds x="1100" y="465" width="54" height="54"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Gateway_MesmoConteudo" bpmnElement="Gateway_MesmoConteudo" isMarkerVisible="true"><dc:Bounds x="1220" y="295" width="54" height="54"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_Resp200" bpmnElement="Task_Resp200"><dc:Bounds x="1350" y="220" width="177" height="68"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_200" bpmnElement="End_200"><dc:Bounds x="1580" y="238" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_Resp409" bpmnElement="Task_Resp409"><dc:Bounds x="1350" y="335" width="177" height="68"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_409" bpmnElement="End_409"><dc:Bounds x="1580" y="353" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_PersistirEvento" bpmnElement="Task_PersistirEvento"><dc:Bounds x="1220" y="555" width="177" height="74"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Boundary_ErroPersistenciaEvento" bpmnElement="Boundary_ErroPersistenciaEvento"><dc:Bounds x="1355" y="607" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_Resp500" bpmnElement="Task_Resp500"><dc:Bounds x="1520" y="738" width="177" height="68"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_500" bpmnElement="End_500"><dc:Bounds x="1750" y="755" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Gateway_EventoMaisRecente" bpmnElement="Gateway_EventoMaisRecente" isMarkerVisible="true"><dc:Bounds x="1450" y="566" width="54" height="54"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_Resp201Historico" bpmnElement="Task_Resp201Historico"><dc:Bounds x="1570" y="635" width="192" height="74"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_201Historico" bpmnElement="End_201Historico"><dc:Bounds x="1815" y="654" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_AvaliarEstado" bpmnElement="Task_AvaliarEstado"><dc:Bounds x="1570" y="455" width="192" height="74"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_Task_Resp201" bpmnElement="Task_Resp201"><dc:Bounds x="1815" y="455" width="177" height="74"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Shape_End_201" bpmnElement="End_201"><dc:Bounds x="2050" y="474" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_Ing_01" bpmnElement="Flow_Ing_01"><di:waypoint x="126" y="492"/><di:waypoint x="170" y="492"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_02" bpmnElement="Flow_Ing_02"><di:waypoint x="328" y="492"/><di:waypoint x="378" y="492"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_03" bpmnElement="Flow_Ing_03"><di:waypoint x="432" y="492"/><di:waypoint x="468.5" y="492"/><di:waypoint x="468.5" y="319"/><di:waypoint x="505" y="319"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_04" bpmnElement="Flow_Ing_04"><di:waypoint x="677" y="319"/><di:waypoint x="740" y="318"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_05" bpmnElement="Flow_Ing_05"><di:waypoint x="432" y="492"/><di:waypoint x="505" y="492"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_06" bpmnElement="Flow_Ing_06"><di:waypoint x="677" y="492"/><di:waypoint x="740" y="492"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_07" bpmnElement="Flow_Ing_07"><di:waypoint x="794" y="492"/><di:waypoint x="827" y="492"/><di:waypoint x="827" y="319"/><di:waypoint x="860" y="319"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_08" bpmnElement="Flow_Ing_08"><di:waypoint x="1038" y="319"/><di:waypoint x="1100" y="318"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_09" bpmnElement="Flow_Ing_09"><di:waypoint x="794" y="492"/><di:waypoint x="860" y="492"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_10" bpmnElement="Flow_Ing_10"><di:waypoint x="1038" y="492"/><di:waypoint x="1100" y="492"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_11" bpmnElement="Flow_Ing_11"><di:waypoint x="1154" y="492"/><di:waypoint x="1187" y="492"/><di:waypoint x="1187" y="322"/><di:waypoint x="1220" y="322"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_12" bpmnElement="Flow_Ing_12"><di:waypoint x="1274" y="322"/><di:waypoint x="1312" y="322"/><di:waypoint x="1312" y="254"/><di:waypoint x="1350" y="254"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_13" bpmnElement="Flow_Ing_13"><di:waypoint x="1527" y="254"/><di:waypoint x="1580" y="256"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_14" bpmnElement="Flow_Ing_14"><di:waypoint x="1274" y="322"/><di:waypoint x="1350" y="369"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_15" bpmnElement="Flow_Ing_15"><di:waypoint x="1527" y="369"/><di:waypoint x="1580" y="371"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_16" bpmnElement="Flow_Ing_16"><di:waypoint x="1154" y="492"/><di:waypoint x="1187" y="492"/><di:waypoint x="1187" y="592"/><di:waypoint x="1220" y="592"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_17" bpmnElement="Flow_Ing_17"><di:waypoint x="1397" y="592"/><di:waypoint x="1450" y="593"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_18" bpmnElement="Flow_Ing_18"><di:waypoint x="1373" y="643"/><di:waypoint x="1373" y="772"/><di:waypoint x="1520" y="772"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_19" bpmnElement="Flow_Ing_19"><di:waypoint x="1697" y="772"/><di:waypoint x="1750" y="773"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_20" bpmnElement="Flow_Ing_20"><di:waypoint x="1504" y="593"/><di:waypoint x="1537" y="593"/><di:waypoint x="1537" y="672"/><di:waypoint x="1570" y="672"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_21" bpmnElement="Flow_Ing_21"><di:waypoint x="1762" y="672"/><di:waypoint x="1815" y="672"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_22" bpmnElement="Flow_Ing_22"><di:waypoint x="1504" y="593"/><di:waypoint x="1537" y="593"/><di:waypoint x="1537" y="492"/><di:waypoint x="1570" y="492"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_23" bpmnElement="Flow_Ing_23"><di:waypoint x="1762" y="492"/><di:waypoint x="1815" y="492"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_Flow_Ing_24" bpmnElement="Flow_Ing_24"><di:waypoint x="1992" y="492"/><di:waypoint x="2050" y="492"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_MessageRequest_ingestao" bpmnElement="MessageFlow_Request_ingestao"><di:waypoint x="600" y="165"/><di:waypoint x="108" y="474"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_1" bpmnElement="MessageFlow_Response_ingestao_1"><di:waypoint x="591" y="285"/><di:waypoint x="591" y="165"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_2" bpmnElement="MessageFlow_Response_ingestao_2"><di:waypoint x="949" y="285"/><di:waypoint x="949" y="165"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_3" bpmnElement="MessageFlow_Response_ingestao_3"><di:waypoint x="1438.5" y="220"/><di:waypoint x="1438.5" y="165"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_4" bpmnElement="MessageFlow_Response_ingestao_4"><di:waypoint x="1438.5" y="335"/><di:waypoint x="1438.5" y="165"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_5" bpmnElement="MessageFlow_Response_ingestao_5"><di:waypoint x="1608.5" y="738"/><di:waypoint x="1608.5" y="165"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_6" bpmnElement="MessageFlow_Response_ingestao_6"><di:waypoint x="1666" y="635"/><di:waypoint x="1666" y="165"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="Edge_MessageResponse_ingestao_7" bpmnElement="MessageFlow_Response_ingestao_7"><di:waypoint x="1903.5" y="455"/><di:waypoint x="1903.5" y="165"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
