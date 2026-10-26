@@ -1,0 +1,15 @@
+flowchart LR
+    O(["Operador de monitoramento<br/>[Pessoa]<br/>Consulta dispositivos e reconhece alertas"])
+    S["Simulador de dispositivos<br/>[Software externo de teste]<br/>Produz eventos fictícios"]
+
+    subgraph C["Fronteira: DevicePulse [Sistema de software]"]
+        DP["DevicePulse<br/>Sistema web de monitoramento<br/>Cadastro, estados, alertas e histórico"]
+    end
+
+    O <-->|"Navegador web / HTTPS<br/>Visualização e ações"| DP
+    S -->|"HTTP POST + JSON<br/>eventId, deviceId, occurredAt, batteryLevel"| DP
+
+    classDef actor fill:#f5f7fa,stroke:#64748b,color:#1f2937,stroke-width:2px;
+    classDef system fill:#e8f2ff,stroke:#245a9a,color:#122d52,stroke-width:2px;
+    class O,S actor;
+    class DP system;
