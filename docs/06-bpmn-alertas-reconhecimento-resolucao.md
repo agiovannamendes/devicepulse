@@ -1,7 +1,7 @@
 # DP-006 — BPMN 2.0: Alertas, Reconhecimento e Resolução
 
-**Versão:** 0.1  
-**Situação:** Rascunho para revisão  
+**Versão:** 1.0  
+**Situação:** Aprovado — modelagem dos processos  
 **Card:** DP-006  
 **Tipo de processo:** TO-BE (fluxos projetados; dados fictícios)  
 **Referências:** [DP-004 — Regras de Negócio e Estados](04-regras-de-negocio-e-estados.md) e [DP-005 — Cadastro e Ingestão](05-bpmn-cadastro-ingestao.md)
@@ -180,6 +180,8 @@ O diagrama A representa **uma avaliação por tipo de alerta**, independentement
 - [ ] Os caminhos de erro e duplicidade estão documentados.
 - [ ] Os fluxos são coerentes com DP-004 e DP-005.
 - [ ] O DP-007 está reservado para consolidar exceções e validar diagramas cruzados.
+
+**Aprovação:** os fluxos e a documentação do DP-006 foram aprovados para integração à `main`. **Verificação técnica pendente:** a importação e a legibilidade final dos arquivos `.bpmn` no BPMN.io continuam como atividade do DP-007; a aprovação do conteúdo não equivale a afirmar que essa verificação já foi executada.
 
 **Próximo card:** DP-007 — Validar BPMNs e documentar exceções operacionais.
 
