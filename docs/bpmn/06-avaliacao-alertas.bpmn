@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_avaliacao-alertas" targetNamespace="https://github.com/agiovannamendes/devicepulse/bpmn" exporter="DevicePulse" exporterVersion="1.0">
+  <bpmn:message id="Message_avaliacao-alertas" name="Solicitação ao DevicePulse"/>
+  <bpmn:error id="Error_avaliacao-alertas" name="Falha de persistência" errorCode="DB_WRITE_FAILURE"/>
+  <bpmn:collaboration id="Collaboration_avaliacao-alertas"><bpmn:participant id="DevicePulse_avaliacao-alertas" name="DevicePulse — processamento" processRef="Process_avaliacao-alertas"/></bpmn:collaboration>
+  <bpmn:process id="Process_avaliacao-alertas" name="DP-006 | Avaliação automática, abertura e resolução" isExecutable="false">
+    <bpmn:startEvent id="Start_Evaluate" name="Avaliação iniciada"><bpmn:outgoing>Flow_StartEvaluate_TaskDeterminarTipo</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:task id="Task_DeterminarTipo" name="Determinar dispositivo, tipo e estado"><bpmn:incoming>Flow_StartEvaluate_TaskDeterminarTipo</bpmn:incoming><bpmn:outgoing>Flow_TaskDeterminarTipo_GatewayTemDados</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_TemDados" name="Há dados válidos?"><bpmn:incoming>Flow_TaskDeterminarTipo_GatewayTemDados</bpmn:incoming><bpmn:outgoing>Flow_GatewayTemDados_TaskSemDados</bpmn:outgoing><bpmn:outgoing>Flow_GatewayTemDados_GatewayCondicao</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:task id="Task_SemDados" name="Manter SEM_DADOS sem abrir alerta"><bpmn:incoming>Flow_GatewayTemDados_TaskSemDados</bpmn:incoming><bpmn:outgoing>Flow_TaskSemDados_EndSemDados</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_SemDados" name="Sem ocorrência"><bpmn:incoming>Flow_TaskSemDados_EndSemDados</bpmn:incoming></bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_Condicao" name="Condição de falha ativa?"><bpmn:incoming>Flow_GatewayTemDados_GatewayCondicao</bpmn:incoming><bpmn:outgoing>Flow_GatewayCondicao_TaskConsultarAberto</bpmn:outgoing><bpmn:outgoing>Flow_GatewayCondicao_TaskConsultarNormal</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:task id="Task_ConsultarAberto" name="Consultar alerta aberto do tipo"><bpmn:incoming>Flow_GatewayCondicao_TaskConsultarAberto</bpmn:incoming><bpmn:outgoing>Flow_TaskConsultarAberto_GatewayAlertaExiste</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_AlertaExiste" name="Alerta aberto?"><bpmn:incoming>Flow_TaskConsultarAberto_GatewayAlertaExiste</bpmn:incoming><bpmn:outgoing>Flow_GatewayAlertaExiste_TaskManter</bpmn:outgoing><bpmn:outgoing>Flow_GatewayAlertaExiste_TaskAbrir</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:task id="Task_Manter" name="Preservar alerta sem duplicar"><bpmn:incoming>Flow_GatewayAlertaExiste_TaskManter</bpmn:incoming><bpmn:outgoing>Flow_TaskManter_EndManter</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_Manter" name="Alerta preservado"><bpmn:incoming>Flow_TaskManter_EndManter</bpmn:incoming></bpmn:endEvent>
+    <bpmn:serviceTask id="Task_Abrir" name="Abrir ocorrência com restrição única"><bpmn:incoming>Flow_GatewayAlertaExiste_TaskAbrir</bpmn:incoming><bpmn:outgoing>Flow_TaskAbrir_EndAbrir</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Boundary_ErroAbrir" name="Falha na gravação" attachedToRef="Task_Abrir" cancelActivity="true"><bpmn:outgoing>Flow_BoundaryErroAbrir_TaskRegistrarFalha</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_ErroAbrir" errorRef="Error_avaliacao-alertas"/></bpmn:boundaryEvent>
+    <bpmn:endEvent id="End_Abrir" name="Alerta aberto"><bpmn:incoming>Flow_TaskAbrir_EndAbrir</bpmn:incoming></bpmn:endEvent>
+    <bpmn:task id="Task_ConsultarNormal" name="Consultar alerta ainda aberto"><bpmn:incoming>Flow_GatewayCondicao_TaskConsultarNormal</bpmn:incoming><bpmn:outgoing>Flow_TaskConsultarNormal_GatewayResolver</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_Resolver" name="Existe alerta aberto?"><bpmn:incoming>Flow_TaskConsultarNormal_GatewayResolver</bpmn:incoming><bpmn:outgoing>Flow_GatewayResolver_TaskResolver</bpmn:outgoing><bpmn:outgoing>Flow_GatewayResolver_TaskNenhumaAcao</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_Resolver" name="Registrar resolução automática"><bpmn:incoming>Flow_GatewayResolver_TaskResolver</bpmn:incoming><bpmn:outgoing>Flow_TaskResolver_EndResolvido</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Boundary_ErroResolver" name="Falha na gravação" attachedToRef="Task_Resolver" cancelActivity="true"><bpmn:outgoing>Flow_BoundaryErroResolver_TaskRegistrarFalha</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorDef_Boundary_ErroResolver" errorRef="Error_avaliacao-alertas"/></bpmn:boundaryEvent>
+    <bpmn:endEvent id="End_Resolvido" name="Alerta resolvido"><bpmn:incoming>Flow_TaskResolver_EndResolvido</bpmn:incoming></bpmn:endEvent>
+    <bpmn:task id="Task_NenhumaAcao" name="Não há alerta a resolver"><bpmn:incoming>Flow_GatewayResolver_TaskNenhumaAcao</bpmn:incoming><bpmn:outgoing>Flow_TaskNenhumaAcao_EndNenhumaAcao</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_NenhumaAcao" name="Sem alteração"><bpmn:incoming>Flow_TaskNenhumaAcao_EndNenhumaAcao</bpmn:incoming></bpmn:endEvent>
+    <bpmn:task id="Task_RegistrarFalha" name="Registrar falha; não confirmar alteração"><bpmn:incoming>Flow_BoundaryErroAbrir_TaskRegistrarFalha</bpmn:incoming><bpmn:incoming>Flow_BoundaryErroResolver_TaskRegistrarFalha</bpmn:incoming><bpmn:outgoing>Flow_TaskRegistrarFalha_EndErro</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_Erro" name="Falha tratada"><bpmn:incoming>Flow_TaskRegistrarFalha_EndErro</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_StartEvaluate_TaskDeterminarTipo" sourceRef="Start_Evaluate" targetRef="Task_DeterminarTipo"/>
+    <bpmn:sequenceFlow id="Flow_TaskDeterminarTipo_GatewayTemDados" sourceRef="Task_DeterminarTipo" targetRef="Gateway_TemDados"/>
+    <bpmn:sequenceFlow id="Flow_GatewayTemDados_TaskSemDados" sourceRef="Gateway_TemDados" targetRef="Task_SemDados" name="Não"/>
+    <bpmn:sequenceFlow id="Flow_TaskSemDados_EndSemDados" sourceRef="Task_SemDados" targetRef="End_SemDados"/>
+    <bpmn:sequenceFlow id="Flow_GatewayTemDados_GatewayCondicao" sourceRef="Gateway_TemDados" targetRef="Gateway_Condicao" name="Sim"/>
+    <bpmn:sequenceFlow id="Flow_GatewayCondicao_TaskConsultarAberto" sourceRef="Gateway_Condicao" targetRef="Task_ConsultarAberto" name="Sim"/>
+    <bpmn:sequenceFlow id="Flow_TaskConsultarAberto_GatewayAlertaExiste" sourceRef="Task_ConsultarAberto" targetRef="Gateway_AlertaExiste"/>
+    <bpmn:sequenceFlow id="Flow_GatewayAlertaExiste_TaskManter" sourceRef="Gateway_AlertaExiste" targetRef="Task_Manter" name="Sim"/>
+    <bpmn:sequenceFlow id="Flow_TaskManter_EndManter" sourceRef="Task_Manter" targetRef="End_Manter"/>
+    <bpmn:sequenceFlow id="Flow_GatewayAlertaExiste_TaskAbrir" sourceRef="Gateway_AlertaExiste" targetRef="Task_Abrir" name="Não"/>
+    <bpmn:sequenceFlow id="Flow_TaskAbrir_EndAbrir" sourceRef="Task_Abrir" targetRef="End_Abrir"/>
+    <bpmn:sequenceFlow id="Flow_GatewayCondicao_TaskConsultarNormal" sourceRef="Gateway_Condicao" targetRef="Task_ConsultarNormal" name="Não"/>
+    <bpmn:sequenceFlow id="Flow_TaskConsultarNormal_GatewayResolver" sourceRef="Task_ConsultarNormal" targetRef="Gateway_Resolver"/>
+    <bpmn:sequenceFlow id="Flow_GatewayResolver_TaskResolver" sourceRef="Gateway_Resolver" targetRef="Task_Resolver" name="Sim"/>
+    <bpmn:sequenceFlow id="Flow_TaskResolver_EndResolvido" sourceRef="Task_Resolver" targetRef="End_Resolvido"/>
+    <bpmn:sequenceFlow id="Flow_GatewayResolver_TaskNenhumaAcao" sourceRef="Gateway_Resolver" targetRef="Task_NenhumaAcao" name="Não"/>
+    <bpmn:sequenceFlow id="Flow_TaskNenhumaAcao_EndNenhumaAcao" sourceRef="Task_NenhumaAcao" targetRef="End_NenhumaAcao"/>
+    <bpmn:sequenceFlow id="Flow_BoundaryErroAbrir_TaskRegistrarFalha" sourceRef="Boundary_ErroAbrir" targetRef="Task_RegistrarFalha"/>
+    <bpmn:sequenceFlow id="Flow_BoundaryErroResolver_TaskRegistrarFalha" sourceRef="Boundary_ErroResolver" targetRef="Task_RegistrarFalha"/>
+    <bpmn:sequenceFlow id="Flow_TaskRegistrarFalha_EndErro" sourceRef="Task_RegistrarFalha" targetRef="End_Erro"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_avaliacao-alertas">
+    <bpmndi:BPMNPlane id="Plane_avaliacao-alertas" bpmnElement="Collaboration_avaliacao-alertas">
+      
+      <bpmndi:BPMNShape id="Shape_DevicePulse_avaliacao-alertas" bpmnElement="DevicePulse_avaliacao-alertas" isHorizontal="true"><dc:Bounds x="40" y="120" width="1920" height="840"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Start_Evaluate" bpmnElement="Start_Evaluate"><dc:Bounds x="105" y="470" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_DeterminarTipo" bpmnElement="Task_DeterminarTipo"><dc:Bounds x="195" y="447" width="185" height="82"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_TemDados" bpmnElement="Gateway_TemDados" isMarkerVisible="true"><dc:Bounds x="432" y="458" width="60" height="60"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_SemDados" bpmnElement="Task_SemDados"><dc:Bounds x="555" y="278" width="185" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_SemDados" bpmnElement="End_SemDados"><dc:Bounds x="790" y="300" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_Condicao" bpmnElement="Gateway_Condicao" isMarkerVisible="true"><dc:Bounds x="555" y="458" width="60" height="60"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_ConsultarAberto" bpmnElement="Task_ConsultarAberto"><dc:Bounds x="710" y="438" width="188" height="82"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_AlertaExiste" bpmnElement="Gateway_AlertaExiste" isMarkerVisible="true"><dc:Bounds x="946" y="452" width="60" height="60"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Manter" bpmnElement="Task_Manter"><dc:Bounds x="1085" y="290" width="184" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Manter" bpmnElement="End_Manter"><dc:Bounds x="1335" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Abrir" bpmnElement="Task_Abrir"><dc:Bounds x="1085" y="435" width="190" height="82"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Boundary_ErroAbrir" bpmnElement="Boundary_ErroAbrir"><dc:Bounds x="1235" y="490" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Abrir" bpmnElement="End_Abrir"><dc:Bounds x="1335" y="457" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_ConsultarNormal" bpmnElement="Task_ConsultarNormal"><dc:Bounds x="710" y="645" width="188" height="82"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_Resolver" bpmnElement="Gateway_Resolver" isMarkerVisible="true"><dc:Bounds x="946" y="655" width="60" height="60"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Resolver" bpmnElement="Task_Resolver"><dc:Bounds x="1085" y="645" width="190" height="82"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Boundary_ErroResolver" bpmnElement="Boundary_ErroResolver"><dc:Bounds x="1235" y="700" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Resolvido" bpmnElement="End_Resolvido"><dc:Bounds x="1335" y="664" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_NenhumaAcao" bpmnElement="Task_NenhumaAcao"><dc:Bounds x="1085" y="788" width="190" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_NenhumaAcao" bpmnElement="End_NenhumaAcao"><dc:Bounds x="1335" y="809" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_RegistrarFalha" bpmnElement="Task_RegistrarFalha"><dc:Bounds x="1470" y="755" width="210" height="78"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Erro" bpmnElement="End_Erro"><dc:Bounds x="1730" y="777" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_StartEvaluate_TaskDeterminarTipo" bpmnElement="Flow_StartEvaluate_TaskDeterminarTipo"><di:waypoint x="141" y="488"/><di:waypoint x="195" y="488"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskDeterminarTipo_GatewayTemDados" bpmnElement="Flow_TaskDeterminarTipo_GatewayTemDados"><di:waypoint x="380" y="488"/><di:waypoint x="432" y="488"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayTemDados_TaskSemDados" bpmnElement="Flow_GatewayTemDados_TaskSemDados"><di:waypoint x="492" y="488"/><di:waypoint x="524" y="488"/><di:waypoint x="524" y="318"/><di:waypoint x="555" y="318"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskSemDados_EndSemDados" bpmnElement="Flow_TaskSemDados_EndSemDados"><di:waypoint x="740" y="318"/><di:waypoint x="790" y="318"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayTemDados_GatewayCondicao" bpmnElement="Flow_GatewayTemDados_GatewayCondicao"><di:waypoint x="492" y="488"/><di:waypoint x="555" y="488"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayCondicao_TaskConsultarAberto" bpmnElement="Flow_GatewayCondicao_TaskConsultarAberto"><di:waypoint x="615" y="488"/><di:waypoint x="663" y="488"/><di:waypoint x="663" y="479"/><di:waypoint x="710" y="479"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskConsultarAberto_GatewayAlertaExiste" bpmnElement="Flow_TaskConsultarAberto_GatewayAlertaExiste"><di:waypoint x="898" y="479"/><di:waypoint x="922" y="479"/><di:waypoint x="922" y="482"/><di:waypoint x="946" y="482"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayAlertaExiste_TaskManter" bpmnElement="Flow_GatewayAlertaExiste_TaskManter"><di:waypoint x="1006" y="482"/><di:waypoint x="1046" y="482"/><di:waypoint x="1046" y="330"/><di:waypoint x="1085" y="330"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskManter_EndManter" bpmnElement="Flow_TaskManter_EndManter"><di:waypoint x="1269" y="330"/><di:waypoint x="1302" y="330"/><di:waypoint x="1302" y="328"/><di:waypoint x="1335" y="328"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayAlertaExiste_TaskAbrir" bpmnElement="Flow_GatewayAlertaExiste_TaskAbrir"><di:waypoint x="1006" y="482"/><di:waypoint x="1046" y="482"/><di:waypoint x="1046" y="476"/><di:waypoint x="1085" y="476"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskAbrir_EndAbrir" bpmnElement="Flow_TaskAbrir_EndAbrir"><di:waypoint x="1275" y="476"/><di:waypoint x="1305" y="476"/><di:waypoint x="1305" y="475"/><di:waypoint x="1335" y="475"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayCondicao_TaskConsultarNormal" bpmnElement="Flow_GatewayCondicao_TaskConsultarNormal"><di:waypoint x="615" y="488"/><di:waypoint x="663" y="488"/><di:waypoint x="663" y="686"/><di:waypoint x="710" y="686"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskConsultarNormal_GatewayResolver" bpmnElement="Flow_TaskConsultarNormal_GatewayResolver"><di:waypoint x="898" y="686"/><di:waypoint x="922" y="686"/><di:waypoint x="922" y="685"/><di:waypoint x="946" y="685"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayResolver_TaskResolver" bpmnElement="Flow_GatewayResolver_TaskResolver"><di:waypoint x="1006" y="685"/><di:waypoint x="1046" y="685"/><di:waypoint x="1046" y="686"/><di:waypoint x="1085" y="686"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskResolver_EndResolvido" bpmnElement="Flow_TaskResolver_EndResolvido"><di:waypoint x="1275" y="686"/><di:waypoint x="1305" y="686"/><di:waypoint x="1305" y="682"/><di:waypoint x="1335" y="682"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GatewayResolver_TaskNenhumaAcao" bpmnElement="Flow_GatewayResolver_TaskNenhumaAcao"><di:waypoint x="1006" y="685"/><di:waypoint x="1046" y="685"/><di:waypoint x="1046" y="828"/><di:waypoint x="1085" y="828"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskNenhumaAcao_EndNenhumaAcao" bpmnElement="Flow_TaskNenhumaAcao_EndNenhumaAcao"><di:waypoint x="1275" y="828"/><di:waypoint x="1305" y="828"/><di:waypoint x="1305" y="827"/><di:waypoint x="1335" y="827"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_BoundaryErroAbrir_TaskRegistrarFalha" bpmnElement="Flow_BoundaryErroAbrir_TaskRegistrarFalha"><di:waypoint x="1253" y="526"/><di:waypoint x="1253" y="794"/><di:waypoint x="1470" y="794"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_BoundaryErroResolver_TaskRegistrarFalha" bpmnElement="Flow_BoundaryErroResolver_TaskRegistrarFalha"><di:waypoint x="1253" y="736"/><di:waypoint x="1253" y="794"/><di:waypoint x="1470" y="794"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_TaskRegistrarFalha_EndErro" bpmnElement="Flow_TaskRegistrarFalha_EndErro"><di:waypoint x="1680" y="794"/><di:waypoint x="1705" y="794"/><di:waypoint x="1705" y="795"/><di:waypoint x="1730" y="795"/></bpmndi:BPMNEdge>
+      
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
