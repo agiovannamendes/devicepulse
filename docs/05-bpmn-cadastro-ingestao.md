@@ -1,7 +1,7 @@
 # DP-005 — BPMN 2.0: Cadastro e Ingestão de Eventos
 
-**Versão:** 1.1 (revisão técnica proposta no DP-007)  
-**Status:** Revisão de exceções — aguardando aprovação do DP-007  
+**Versão:** 1.1  
+**Status:** Revisão técnica aprovada no DP-007  
 **Tipo:** Modelagem TO-BE — processo proposto para o DevicePulse  
 **Card:** DP-005  
 **Referências:** [DP-002](02-atores-jornadas-casos-de-uso.md), [DP-003](03-requisitos-funcionais-e-nao-funcionais.md) e [DP-004](04-regras-de-negocio-e-estados.md) — versões 1.0
@@ -173,4 +173,4 @@ O simulador, o operador e a API **não acessam dispositivos físicos ou serviço
 - Foram disponibilizadas prévias SVG [do cadastro](bpmn/05-cadastro.svg) e [da ingestão](bpmn/05-ingestao.svg) derivadas do layout BPMN DI atualizado.
 - Consulte a [matriz de exceções e validação BPMN](07-validacao-bpmn-e-matriz-excecoes.md) para responsabilidades, términos e política de retomada.
 
-**Pendente:** conferência visual final em BPMN.io e aprovação da revisão no DP-007.
+**Revisão 1.1 aprovada no DP-007.** A conferência visual completa em BPMN.io permanece pendente para registro antes do portão de aprovação DP-013.
