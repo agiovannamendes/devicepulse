@@ -1,7 +1,7 @@
 # DevicePulse — Documento 02: Atores, Jornadas e Casos de Uso
 
-**Versão:** 0.1  
-**Situação:** Rascunho para revisão  
+**Versão:** 1.0  
+**Situação:** Aprovado  
 **Referência:** Documento 01 — Visão e Escopo do MVP  
 **Card:** DP-002
 
@@ -176,4 +176,4 @@ Este documento poderá ser aprovado quando:
 
 ---
 
-*Documento preparado para revisão. Nenhuma integração com dados reais ou plataformas proprietárias está prevista.*
+*Documento aprovado como referência para especificação de requisitos. Nenhuma integração com dados reais ou plataformas proprietárias está prevista.*
