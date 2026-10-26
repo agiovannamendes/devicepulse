@@ -187,6 +187,43 @@
                         "totalPages": 1
                       }
                     }
+                  },
+                  "empty": {
+                    "summary": "Nenhum dispositivo corresponde ao filtro",
+                    "value": {
+                      "data": [],
+                      "meta": {
+                        "page": 1,
+                        "pageSize": 20,
+                        "totalItems": 0,
+                        "totalPages": 0
+                      }
+                    }
+                  },
+                  "offline": {
+                    "summary": "Dispositivo sem comunicação, mantendo bateria conhecida",
+                    "value": {
+                      "data": [
+                        {
+                          "id": "383f7ac3-55f4-4891-8fa6-88253ce7b42c",
+                          "code": "SENSOR_001",
+                          "name": "Sensor de demonstração 01",
+                          "connectivityStatus": "OFFLINE",
+                          "batteryLevel": 15,
+                          "batteryStatus": "BAIXA",
+                          "lastEventAt": "2026-10-26T17:00:00Z",
+                          "batteryReadingIsStale": true,
+                          "createdAt": "2026-10-26T17:00:00Z",
+                          "updatedAt": "2026-10-26T17:00:00Z"
+                        }
+                      ],
+                      "meta": {
+                        "page": 1,
+                        "pageSize": 20,
+                        "totalItems": 1,
+                        "totalPages": 1
+                      }
+                    }
                   }
                 }
               }
@@ -235,6 +272,23 @@
                         "batteryLevel": 15,
                         "batteryStatus": "BAIXA",
                         "lastEventAt": "2026-10-26T17:00:00Z",
+                        "batteryReadingIsStale": false,
+                        "createdAt": "2026-10-26T17:00:00Z",
+                        "updatedAt": "2026-10-26T17:00:00Z"
+                      }
+                    }
+                  },
+                  "noData": {
+                    "summary": "Dispositivo cadastrado antes da primeira medição",
+                    "value": {
+                      "data": {
+                        "id": "383f7ac3-55f4-4891-8fa6-88253ce7b42c",
+                        "code": "SENSOR_001",
+                        "name": "Sensor de demonstração 01",
+                        "connectivityStatus": "SEM_DADOS",
+                        "batteryLevel": null,
+                        "batteryStatus": "SEM_DADOS",
+                        "lastEventAt": null,
                         "batteryReadingIsStale": false,
                         "createdAt": "2026-10-26T17:00:00Z",
                         "updatedAt": "2026-10-26T17:00:00Z"
@@ -520,6 +574,30 @@
                           "acknowledgedAt": null,
                           "resolvedAt": null,
                           "status": "OPEN",
+                          "acknowledged": false
+                        }
+                      ],
+                      "meta": {
+                        "page": 1,
+                        "pageSize": 20,
+                        "totalItems": 1,
+                        "totalPages": 1
+                      }
+                    }
+                  },
+                  "resolvedWithoutAck": {
+                    "summary": "Alerta resolvido automaticamente sem reconhecimento",
+                    "value": {
+                      "data": [
+                        {
+                          "id": "a15bef2e-41e2-44e0-ac70-d334f3ef7a3c",
+                          "deviceId": "383f7ac3-55f4-4891-8fa6-88253ce7b42c",
+                          "alertType": "LOW_BATTERY",
+                          "sourceEventId": "7a4c4e36-88c9-4059-aa65-9b1e0b88b4be",
+                          "openedAt": "2026-10-26T17:00:01Z",
+                          "acknowledgedAt": null,
+                          "resolvedAt": "2026-10-26T17:05:00Z",
+                          "status": "RESOLVED",
                           "acknowledged": false
                         }
                       ],
