@@ -16,6 +16,6 @@
 <path class="link" d="M885 347 L1020 347"/>
 <text x="406" y="306" font-size="16">1 : N</text>
 <text x="950" y="546" font-size="16">1 : N</text>
-<text x="898" y="330" font-size="16">0..1 : N</text>
+<text x="898" y="330" font-size="16">0..1 : 0..1</text>
 <text x="52" y="608" font-size="15" fill="#66798b">PK = chave primária • FK = chave estrangeira • UK = unicidade • ? = campo opcional</text>
 <text x="52" y="635" font-size="14" fill="#66798b">Fonte editável: 09-der-fisico.mmd • Projeto fictício DevicePulse • DP-009</text></svg>
