@@ -106,6 +106,11 @@ CREATE INDEX idx_device_events_device_occurred
 CREATE INDEX idx_device_events_received
     ON device_events (received_at DESC, id DESC);
 
+-- Uma medicao ficticia pode originar, no maximo, uma abertura LOW_BATTERY.
+CREATE UNIQUE INDEX ux_alerts_source_event
+    ON alerts (source_event_id)
+    WHERE source_event_id IS NOT NULL;
+
 -- Historico de alertas por dispositivo, incluindo os resolvidos.
 CREATE INDEX idx_alerts_device_opened
     ON alerts (device_id, opened_at DESC, id DESC);
