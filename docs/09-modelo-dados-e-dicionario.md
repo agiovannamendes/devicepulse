@@ -1,7 +1,7 @@
 # DP-009 — Modelo de Dados, DER e Dicionário PostgreSQL
 
-**Versão:** 0.1  
-**Situação:** Proposta para revisão — ainda não aprovada  
+**Versão:** 1.0  
+**Situação:** Aprovado em 26/10/2026 (modelagem documental)  
 **Card:** DP-009  
 **Projeto:** DevicePulse — dados e dispositivos fictícios  
 **Dependências:** [DP-004 — Regras de negócio](04-regras-de-negocio-e-estados.md) e [DP-008 — Arquitetura C4](08-arquitetura-c4-fluxo-dados.md).
@@ -224,19 +224,21 @@ As seguintes escolhas são **propostas específicas do DP-009** e dependem da su
 
 **Reservado ao DP-010:** rotas REST, formato exato de IDs no JSON, códigos HTTP e mensagens de erro. **Reservado à implementação:** ferramenta de migrações, versões fixadas, dados seed, configuração de conexão e controle transacional em código.
 
-## 11. Checklist de aceite do card
+## 11. Checklist de aceite da modelagem documental
 
-- [ ] DER lógico apresenta entidades e cardinalidades coerentes.
-- [ ] DER físico contém as três tabelas, campos, tipos, PK, FK e CHECKs.
-- [ ] Dicionário de dados define nulidade, finalidade e validações.
-- [ ] Histórico suporta muitos eventos por dispositivo e paginação.
-- [ ] Idempotência usa eventId global e evita reprocessar eventos repetidos.
-- [ ] Eventos fora de ordem nunca alteram o estado atual nem alertas.
-- [ ] Alertas reconhecidos e resolvidos são distinguíveis sem coluna redundante.
-- [ ] No máximo um alerta ainda aberto por dispositivo e tipo.
-- [ ] Índices atendem consultas de dashboard e histórico.
-- [ ] Não há dados reais; DDL e consultas são referências revisáveis.
-- [ ] Modelo aprovado antes de incorporar o Pull Request à main.
+- [x] DER lógico apresenta entidades e cardinalidades coerentes.
+- [x] DER físico contém as três tabelas, campos, tipos, PK, FK e CHECKs.
+- [x] Dicionário de dados define nulidade, finalidade e validações.
+- [x] Histórico suporta muitos eventos por dispositivo e paginação.
+- [x] Idempotência usa eventId global e evita reprocessar eventos repetidos.
+- [x] Eventos fora de ordem nunca alteram o estado atual nem alertas.
+- [x] Alertas reconhecidos e resolvidos são distinguíveis sem coluna redundante.
+- [x] No máximo um alerta ainda aberto por dispositivo e tipo.
+- [x] Índices atendem consultas de dashboard e histórico.
+- [x] Não há dados reais; DDL e consultas são referências revisáveis.
+- [x] Modelo aprovado antes de incorporar o Pull Request à main.
+
+**Aprovação registrada:** o modelo lógico/físico, o dicionário, as PK/FK, os índices e as estratégias de integridade foram aprovados em 26/10/2026. A aprovação se refere ao **projeto do banco**, não à execução do SQL ou aos testes de integração: o DDL e as consultas deverão ser validados em PostgreSQL durante a implementação, com os 16 cenários DB-01 a DB-16 planejados.
 
 **Próximo card:** DP-010 — Especificar os contratos da API REST (OpenAPI).
 
