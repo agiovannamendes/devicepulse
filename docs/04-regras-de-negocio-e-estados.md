@@ -1,7 +1,7 @@
 # DevicePulse — Documento 04: Regras de Negócio e Estados
 
-**Versão:** 0.1  
-**Situação:** Proposta para revisão  
+**Versão:** 1.0  
+**Situação:** Aprovado em 26/10/2026  
 **Card:** DP-004  
 **Referências:** DP-001, DP-002 e DP-003 (versões 1.0)
 
@@ -9,7 +9,7 @@
 
 Estabelecer as regras pelas quais o DevicePulse recebe eventos fictícios, determina o estado operacional de um dispositivo e controla o ciclo de vida dos alertas.
 
-As decisões deste documento servem de referência para os BPMNs, o modelo de dados, os contratos da API e os testes. Os valores de configuração são **propostas para o MVP**, não parâmetros de equipamentos reais.
+As decisões deste documento servem de referência para os BPMNs, o modelo de dados, os contratos da API e os testes. Os valores de configuração foram **aprovados para o MVP simulado**, não representam parâmetros de equipamentos reais.
 
 ## 2. Conceitos e limites
 
@@ -24,15 +24,18 @@ As decisões deste documento servem de referência para os BPMNs, o modelo de da
 
 **Separação importante:** o estado de comunicação não substitui o estado de bateria. Um equipamento pode estar offline e, ao mesmo tempo, ter um último valor conhecido de bateria baixa. Nesse caso, as ocorrências podem coexistir.
 
-## 3. Parâmetros propostos
+## 3. Parâmetros aprovados para o MVP
 
-| Parâmetro | Valor inicial proposto | Uso |
+| Parâmetro | Valor inicial aprovado | Uso |
 | --- | --- | --- |
 | `LOW_BATTERY_THRESHOLD` | **20%** | Considerar bateria baixa quando o percentual for menor ou igual ao limite. |
 | `COMMUNICATION_TIMEOUT_SECONDS` | **300 segundos (5 minutos)** | Identificar falta de comunicação após exceder o período. |
 | `COMMUNICATION_CHECK_INTERVAL_SECONDS` | **30 segundos** | Frequência de execução do verificador interno. |
+| `SIMULATOR_EVENT_INTERVAL_SECONDS` | **60 segundos** | Intervalo padrão entre os eventos de cada dispositivo simulado em operação normal. |
 
-Os parâmetros ficarão na configuração da aplicação, com valores padrão documentados. **Não haverá tela para alterá-los no MVP.** Eles poderão ser ajustados antes da aprovação deste documento.
+Os parâmetros ficarão na configuração da aplicação, com valores padrão documentados. **Não haverá tela para alterá-los no MVP.** Qualquer mudança futura deverá ser registrada e refletida nos testes e na documentação.
+
+Em operação normal, o simulador envia um evento por dispositivo a cada **60 segundos**. Para demonstrar a perda de comunicação, deve ser possível interromper os envios de um dispositivo fictício. O período de 60 segundos não significa que um evento deverá ser enviado obrigatoriamente: o fluxo pode ser pausado de forma intencional para os testes.
 
 O instante exato da transição para offline poderá ter um atraso de até um ciclo do verificador, pois a análise é periódica.
 
@@ -121,7 +124,7 @@ A verificação da existência e a criação do alerta devem ser protegidas cont
 ### RN-019 — Reconhecimento
 Um operador pode reconhecer uma ocorrência aberta. O sistema registra a data/hora do reconhecimento. No MVP, sem autenticação, não será registrada uma identidade verificável de usuário; o registro indica apenas que houve reconhecimento na demonstração.
 
-Reconhecer um alerta **não** altera o estado técnico do dispositivo e **não** preenche a data de resolução. Reconhecimentos repetidos não devem criar novos eventos de reconhecimento.
+Reconhecer um alerta **não** altera o estado técnico do dispositivo e **não** preenche a data de resolução. Reconhecimentos repetidos não devem criar novos eventos de reconhecimento. **Somente alertas ainda abertos podem receber reconhecimento**; uma ocorrência já resolvida não pode ser reconhecida posteriormente.
 
 ### RN-020 — Resolução automática
 O sistema resolve o alerta `LOW_BATTERY` quando uma medição nova válida indica bateria normal.
@@ -187,6 +190,18 @@ Assim, as combinações possíveis são:
 
 A definição dos campos finais e eventuais dados de auditoria ocorrerá no DER (DP-009).
 
+### 8.4 Nomenclatura apresentada na interface
+
+Os estados internos de conectividade serão apresentados ao operador com linguagem simples:
+
+| Estado técnico | Texto na interface |
+| --- | --- |
+| `SEM_DADOS` | Aguardando dados |
+| `ONLINE` | Conectado |
+| `OFFLINE` | Sem comunicação |
+
+O nome exibido **não altera o significado técnico do estado**, que permanece sob responsabilidade do backend. As telas de histórico e de bateria deverão indicar quando uma informação conhecida pode estar desatualizada.
+
 ## 9. Exemplos operacionais e cenários de teste
 
 | Código | Situação | Comportamento esperado |
@@ -209,6 +224,9 @@ A definição dos campos finais e eventuais dados de auditoria ocorrerá no DER 
 | CT-16 | Evento atrasado enviado depois de outro mais recente | Pode constar no histórico, mas não reverte o estado nem alerta |
 | CT-17 | Evento com bateria 101% ou dispositivo desconhecido | Rejeita e não altera estado |
 | CT-18 | Evento com data futura | Rejeita e não altera estado |
+| CT-19 | Simulador em operação normal | Gera evento por dispositivo a cada 60 segundos; a interrupção proposital dos envios permite testar offline |
+| CT-20 | Operador tenta reconhecer alerta já resolvido | Rejeita a ação e preserva os dados históricos |
+| CT-21 | Condição normalizada antes do reconhecimento | Resolve automaticamente o alerta e mantém `acknowledgedAt = null` |
 
 ## 10. Requisitos atendidos e próximos artefatos
 
@@ -219,18 +237,22 @@ A definição dos campos finais e eventuais dados de auditoria ocorrerá no DER 
 | RN-012 a RN-015 | RF-009, RF-012 | DP-006 BPMN, DP-012 testes |
 | RN-016 a RN-023 | RF-014 a RF-017 | DP-006/007 BPMN, DP-009 banco |
 
-## 11. Decisões a validar neste card
+## 11. Registro das decisões aprovadas
 
-1. O nível de bateria baixa será **20% ou menos**?
-2. A comunicação será considerada perdida após **mais de 5 minutos** sem evento válido?
-3. O verificador rodará a cada **30 segundos**, sujeito a ajustes técnicos de execução?
-4. Dispositivos ainda sem eventos ficarão em **SEM_DADOS**, sem alerta?
-5. O reconhecimento deve ser permitido somente enquanto o alerta está aberto?
-6. Eventos atrasados serão preservados para consulta, mas não poderão alterar o estado atual?
-7. A normalização resolverá automaticamente a ocorrência, inclusive se não houve reconhecimento?
+Decisões aprovadas em **26/10/2026** para o MVP:
 
-**Não aprovar como versão 1.0 antes de validar essas decisões.**
+1. **Bateria baixa:** percentual menor ou igual a **20%**.
+2. **Perda de comunicação:** intervalo **maior que 5 minutos** desde o último evento válido considerado para o estado.
+3. **Verificador de comunicação:** execução prevista a cada **30 segundos**.
+4. **Simulador:** em operação normal, um evento a cada **60 segundos por dispositivo**, com opção de interromper a comunicação fictícia.
+5. **Dispositivo sem primeira comunicação:** `SEM_DADOS`, sem alerta de offline.
+6. **Reconhecimento de alerta:** permitido somente enquanto a ocorrência está aberta; reconhecer não equivale a resolver.
+7. **Evento atrasado:** pode ser preservado no histórico, mas não altera o estado operacional nem os alertas atuais.
+8. **Normalização:** a condição resolvida fecha automaticamente sua ocorrência, inclusive sem reconhecimento prévio.
+9. **Apresentação dos estados:** usar “Aguardando dados”, “Conectado” e “Sem comunicação” na interface, mantendo `SEM_DADOS`, `ONLINE` e `OFFLINE` como valores técnicos.
+
+As decisões são base para a modelagem BPMN e para os testes. Qualquer ajuste posterior deverá ser versionado no GitHub, com avaliação do impacto nos requisitos e casos de teste.
 
 ---
 
-*Documento de regras proposto para um sistema demonstrativo com dados fictícios. Não representa políticas operacionais de empresas ou dispositivos reais.*
+*Documento aprovado para um sistema demonstrativo com dados fictícios. Não representa políticas operacionais de empresas ou dispositivos reais.*
