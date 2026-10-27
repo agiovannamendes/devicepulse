@@ -1,6 +1,6 @@
 # DP-012 — Estratégia de dados de teste e execução reproduzível
 
-**Versão:** 0.1 — proposta de testes, não executada  
+**Versão:** 1.0 — plano aprovado; execução pendente  
 **Projeto:** DevicePulse — exclusivamente cenários fictícios.
 
 ## 1. Ambiente mínimo da futura execução
