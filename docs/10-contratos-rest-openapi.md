@@ -1,7 +1,7 @@
 # DP-010 — Contratos REST e OpenAPI
 
-**Versão:** 0.1  
-**Situação:** Em revisão — não aprovado  
+**Versão:** 1.0  
+**Situação:** Aprovado quanto ao contrato — PR #10 incorporado à main em 27/10/2026  
 **Card:** DP-010  
 **Projeto:** DevicePulse — eventos e dispositivos exclusivamente fictícios  
 **Dependências:** [DP-003 — Requisitos](03-requisitos-funcionais-e-nao-funcionais.md), [DP-004 — Regras](04-regras-de-negocio-e-estados.md), [DP-009 — DER e Dicionário](09-modelo-dados-e-dicionario.md)  
