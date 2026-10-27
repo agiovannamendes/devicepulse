@@ -1,0 +1,21 @@
+flowchart TD
+    A([Operador abre Central de alertas]) --> B["GET /alerts<br/>Filtros independentes: OPEN/RESOLVED e acknowledged"]
+    B --> C{"Há alertas?"}
+    C -- Não --> V["Estado vazio<br/>Limpar filtros"]
+    C -- Sim --> D["Selecionar ocorrência<br/>GET /alerts/{alertId}"]
+    D --> E{"resolvedAt é null?"}
+    E -- Não --> R["Mostrar resolvido<br/>Sem botão reconhecer"]
+    E -- Sim --> F{"acknowledgedAt é null?"}
+    F -- Não --> G["Mostrar reconhecido<br/>Falha técnica permanece aberta"]
+    F -- Sim --> H["Botão Reconhecer<br/>POST /alerts/{alertId}/acknowledge"]
+    H --> I{"Resposta"}
+    I -- "200" --> J["Atualizar detalhe/central<br/>Registrar ciência; NÃO resolver"]
+    I -- "409" --> R
+    I -- "404" --> N["Alerta não encontrado<br/>Voltar à central"]
+    I -- "500/503" --> T["Exibir erro e permitir reconsulta<br/>Não confirmar reconhecimento"]
+    G --> B
+    J --> B
+    R --> B
+    V --> B
+    N --> B
+    T --> B

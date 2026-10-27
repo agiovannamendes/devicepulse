@@ -1,0 +1,18 @@
+flowchart TD
+    Start([Abrir DevicePulse]) --> Overview["Visão geral<br/>Indicadores e alertas recentes"]
+    Overview --> Devices["Dispositivos<br/>Buscar, filtrar e paginar"]
+    Overview --> Alerts["Central de alertas<br/>Filtrar e consultar"]
+    Devices --> New["Novo dispositivo<br/>Formulário code + name"]
+    New --> Devices
+    Devices --> Detail["Detalhes do dispositivo<br/>Estado atual e histórico"]
+    Detail --> Devices
+    Detail --> Alerts
+    Alerts --> AlertDetail["Detalhes do alerta<br/>Estado, datas e ações"]
+    AlertDetail --> Alerts
+    Alerts --> Overview
+    Devices --> Overview
+    subgraph "Navegação desktop: menu lateral"
+      Overview
+      Devices
+      Alerts
+    end
