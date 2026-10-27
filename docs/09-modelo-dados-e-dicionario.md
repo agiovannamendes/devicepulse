@@ -1,6 +1,6 @@
 # DP-009 — Modelo de Dados, DER e Dicionário PostgreSQL
 
-**Versão:** 1.0  
+**Versão:** 1.1  
 **Situação:** Aprovado em 26/10/2026 (modelagem documental)  
 **Card:** DP-009  
 **Projeto:** DevicePulse — dados e dispositivos fictícios  
@@ -202,7 +202,7 @@ Todos os identificadores e horários acima são **ilustrativos**. Não correspon
 
 **Estado dos testes:** cenários **especificados**, ainda não executados. O SQL é de referência e não foi aplicado a um PostgreSQL nesta etapa.
 
-## 10. Rastreabilidade e decisões em aberto
+## 10. Rastreabilidade e decisões aprovadas
 
 | Origem | Regra/requisito | Elemento físico |
 | --- | --- | --- |
@@ -214,7 +214,7 @@ Todos os identificadores e horários acima são **ilustrativos**. Não correspon
 | DP-007 | EX-05..EX-12, EX-15..EX-27 | Constraints, transações, índices e reconciliação |
 | DP-008 | ADR-002 (PostgreSQL) | Banco relacional único acessado pelo backend |
 
-As seguintes escolhas são **propostas específicas do DP-009** e dependem da sua aprovação:
+As seguintes escolhas do DP-009 foram **aprovadas para o MVP** no PR #9 e são a linha de base da implementação:
 - **UUIDs** para identificação técnica e eventId; code amigável e normalizado para dispositivo.
 - **Três tabelas** de negócio, sem tabelas extras de status ou usuários no MVP.
 - **Estado atual de conectividade materializado** em devices, atualizado pelo backend; bateria classificada a partir do último valor.
@@ -222,7 +222,7 @@ As seguintes escolhas são **propostas específicas do DP-009** e dependem da su
 - **source_event_id** opcional para rastrear bateria baixa e chave composta para evitar origem de outro dispositivo.
 - **Restrição de unicidade parcial** para um alerta não resolvido por dispositivo/tipo e para origem de bateria.
 
-**Reservado ao DP-010:** rotas REST, formato exato de IDs no JSON, códigos HTTP e mensagens de erro. **Reservado à implementação:** ferramenta de migrações, versões fixadas, dados seed, configuração de conexão e controle transacional em código.
+**Definido no DP-010 (v1.0):** rotas REST, UUIDs nos campos de identificação, formatos JSON, códigos HTTP e mensagens de erro. **Reservado à implementação:** ferramenta de migrações, versões fixadas, dados seed, configuração de conexão e controle transacional em código.
 
 ## 11. Checklist de aceite da modelagem documental
 
