@@ -1,7 +1,7 @@
 # DP-013 — Checklist de evidências para revisão final
 
-**Versão:** 0.1 — formulário de registro de evidências, sem aceitação automática  
-**Estado:** PENDENTE  
+**Versão:** 1.0 — documento aprovado para referência; validações técnicas pendentes
+**Estado da execução de verificações:** PENDENTE  
 **Objetivo:** transformar avaliações externas em evidências objetivas, por arquivo, sem declarar validação que não foi realizada.
 
 ## A. BPMN.io — obrigatório antes do gate
