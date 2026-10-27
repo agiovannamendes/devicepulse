@@ -2,9 +2,9 @@
   "openapi": "3.1.0",
   "info": {
     "title": "DevicePulse — API REST",
-    "version": "0.1.0",
-    "summary": "Contrato proposto do MVP de monitoramento de dispositivos fictícios",
-    "description": "DP-010 • contrato em revisão. Dados exclusivamente fictícios. O MVP é local e não possui autenticação de operadores; não publicar operações de escrita sem controles de segurança. O banco de referência é PostgreSQL, com estados e alertas de DP-004/DP-009. Paths relativos ao server URL.",
+    "version": "1.0.0",
+    "summary": "Contrato aprovado do MVP de monitoramento de dispositivos fictícios",
+    "description": "DP-010 • contrato aprovado para implementação em 27/10/2026; validação externa e testes HTTP reais ainda pendentes. Dados exclusivamente fictícios. O MVP é local e não possui autenticação de operadores; não publicar operações de escrita sem controles de segurança. O banco de referência é PostgreSQL, com estados e alertas de DP-004/DP-009. Paths relativos ao server URL.",
     "license": {
       "name": "Documentação interna do projeto DevicePulse"
     }
