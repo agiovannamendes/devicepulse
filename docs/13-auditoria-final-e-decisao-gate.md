@@ -1,17 +1,17 @@
 # DP-013 — Relatório de auditoria final e decisão do portão
 
-**Versão:** 0.1 (relatório para revisão, relativo ao pacote aprovado DP-001 a DP-012)  
-**Situação do gate:** **PENDENTE / IMPLEMENTAÇÃO AINDA NÃO LIBERADA**  
+**Versão:** 1.0 (relatório de auditoria aprovado; pendências do gate em aberto)  
+**Situação:** **Relatório aprovado em 27/10/2026; gate NO-GO temporário / implementação não liberada**  
 **Data de referência:** 27/10/2026  
 **Projeto:** DevicePulse — portfólio Full Stack com dispositivos e eventos exclusivamente fictícios  
 **Card:** DP-013  
-**PR:** rascunho; dependente de inspeção e aceite, sem merge automático.
+**PR:** #13 — alterações documentais aprovadas para integração à `main`; a aprovação do relatório não encerra os bloqueios técnicos do gate.
 
 ## 1. Objeto e resultado da auditoria
 
 Esta auditoria cruza escopo, casos de uso, requisitos, regras, BPMNs, arquitetura C4, modelo PostgreSQL, contrato REST, wireframes e matriz de testes para impedir que diferenças de interpretação se transformem em código. O pacote antecedente **já possui aprovações documentais**, mas a decisão de liberação para implementação depende de **evidências específicas**.
 
-**Resultado preliminar:** a estrutura documental e as regras centrais estão majoritariamente alinhadas; há correções editoriais aplicadas nesta branch e **pendências obrigatórias** de inspeção visual BPMN, alinhamento das legendas no modelador e validação independente OpenAPI. Portanto, **ainda não existe decisão definitiva de "GO"** e o MVP não foi congelado formalmente.
+**Resultado da auditoria aprovada:** a estrutura documental e as regras centrais estão majoritariamente alinhadas; há correções editoriais aplicadas nesta branch e **pendências obrigatórias** de inspeção visual BPMN, alinhamento das legendas no modelador e validação independente OpenAPI. Portanto, **ainda não existe decisão definitiva de "GO"** e o MVP não foi congelado formalmente.
 
 ### 1.1 Evidências documentais conferidas
 
@@ -117,27 +117,27 @@ Existem 24 cards DP-014..DP-037 no backlog de desenvolvimento. As três primeira
 | DP-001..DP-012 disponíveis e aprovados | Documentos íntegros em GitHub | **CONFERIDO** |
 | Limites de escopo claros | Dentro/fora definido com referências | **CONFERIDO** |
 | Regra ⇄ banco ⇄ API ⇄ UI ⇄ teste | Não haver divergência de comportamento não resolvida | **PARCIAL — G-02** |
-| Atualizações editoriais coerentes | PR do DP-013 revisada | **EM REVISÃO** |
+| Atualizações editoriais coerentes | PR do DP-013 revisada | **APROVADOS PARA INTEGRAR / EVIDÊNCIAS PENDENTES** |
 | Cinco BPMNs | Importação, mensagens, gateways, caminhos e legibilidade comprovados | **PENDENTE — G-01** |
 | Contrato OpenAPI | Importação e validação independente comprovadas | **PENDENTE — G-03** |
 | Wireframes | Visuais desktop/mobile aceitos | **PENDENTE — G-04** |
 | Backlog de desenvolvimento | Cards ordenados, primeiro DP-014 condicionado ao gate | **CONFERIDO** |
 | Testes, segurança e reprodutibilidade planejados | DP-012 aprovado; execução futura discriminada | **CONFERIDO** |
-| Assinatura/aceite da responsável | Aprovação explícita para **liberar programação** | **PENDENTE** |
+| Assinatura/aceite da responsável | Aprovação explícita para **liberar programação** | **PENDENTE (aprovação do relatório registrada, GO não concedido)** |
 
-## 7. Decisão recomendada no momento
+## 7. Decisão do gate após aprovação do relatório
 
 <escape>**DECISÃO DO GATE: NO-GO TEMPORÁRIO — NÃO LIBERAR IMPLEMENTAÇÃO.**</escape>
 
-Motivos objetivos: G-01/G-02/G-03 ainda carecem de validação e/ou ajuste de BPMN; G-04 carece de inspeção visual; o presente PR precisa de revisão. **Não** se trata de rejeitar o projeto: o escopo, a arquitetura, o banco, o contrato e a matriz de QA já são a base madura para a fase seguinte.
+Motivos objetivos: G-01/G-02/G-03 ainda carecem de validação e/ou ajuste de BPMN; G-04 carece de inspeção visual; o relatório documental foi aprovado, mas as verificações técnicas listadas ainda faltam. **Não** se trata de rejeitar o projeto: o escopo, a arquitetura, o banco, o contrato e a matriz de QA já são a base madura para a fase seguinte.
 
 ### Para mudar a decisão para GO
 
 1. Apresentar evidência da importação e verificação dos cinco BPMNs e corrigir eventuais problemas reais, inclusive rótulos HTTP 500/503 conforme contrato.
 2. Validar o OpenAPI 3.1 em visualizador/validador independente e registrar resultado sem erros impeditivos.
 3. Revisar visualmente os 14 wireframes (7 conjuntos desktop/mobile) e registrar aceite ou ajustes.
-4. Rever/mesclar ajustes editoriais deste PR, atualizar este documento para **versão 1.0** com evidências e status corretos.
-5. Obter aprovação explícita da responsável, registrar **GO**, mover DP-013 a concluído e somente então iniciar DP-014.
+4. Manter este relatório documental v1.0 e incorporar um adendo de evidências atualizadas antes da decisão GO; corrigir os itens bloqueantes efetivamente.
+5. Com as evidências validadas, obter aprovação explícita de **liberação da implementação (GO)**, registrar essa decisão em adendo, mover DP-013 a concluído e somente então iniciar DP-014.
 
 Os itens G-08/G-09 são entregáveis da implementação e **não exigem fingir** que PostgreSQL, React ou testes de sistema já foram executados neste gate.
 
