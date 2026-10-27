@@ -1,7 +1,7 @@
 # DP-012 — Plano de testes, segurança e rastreabilidade
 
-**Versão:** 0.1  
-**Situação:** Rascunho para revisão e aprovação documental  
+**Versão:** 1.0  
+**Situação:** Aprovado em 27/10/2026 — planejamento de QA  
 **Projeto:** DevicePulse — sistema de monitoramento de dispositivos fictícios  
 **Card:** DP-012  
 **Dependências aprovadas:** [DP-003 — RF e RNF](03-requisitos-funcionais-e-nao-funcionais.md), [DP-004 — regras e estados](04-regras-de-negocio-e-estados.md), [DP-010 — API/OpenAPI](10-contratos-rest-openapi.md) e [DP-011 — wireframes e fluxos](11-wireframes-fluxos-interfaces.md).  
@@ -182,16 +182,18 @@ As classificações de risco são **propostas qualitativas**, não probabilidade
 
 ## 11. Checklist para aprovação deste card
 
-- [ ] Matriz RF/RN/RNF referencia ao menos um teste para cada ID aprovado.
-- [ ] O catálogo inclui testes para as 27 exceções do DP-007.
-- [ ] Casos unitários/integração/API/DB/job/E2E/segurança/UX e desempenho estão definidos.
-- [ ] Bateria 20/21%, timeout 299/300/301 s, deduplicação e fora de ordem estão cobertos.
-- [ ] Persistência, rollback, reconhecimento e resolução independentes estão cobertos.
-- [ ] Checklist de segurança e prevenção de segredos preparado.
-- [ ] Dados fictícios, ambiente de teste e método de medição RNF-004 definidos.
-- [ ] Nenhum teste é declarado executado, e todos têm critério e campo de evidência.
-- [ ] As pendências de validação final ficam explícitas para o DP-013.
-- [ ] Aprovação documental do DP-012 antes de merge na `main`.
+- [x] Matriz RF/RN/RNF referencia ao menos um teste para cada ID aprovado.
+- [x] O catálogo inclui testes para as 27 exceções do DP-007.
+- [x] Casos unitários/integração/API/DB/job/E2E/segurança/UX e desempenho estão definidos.
+- [x] Bateria 20/21%, timeout 299/300/301 s, deduplicação e fora de ordem estão cobertos.
+- [x] Persistência, rollback, reconhecimento e resolução independentes estão cobertos.
+- [x] Checklist de segurança e prevenção de segredos preparado.
+- [x] Dados fictícios, ambiente de teste e método de medição RNF-004 definidos.
+- [x] Nenhum teste é declarado executado, e todos têm critério e campo de evidência.
+- [x] As pendências de validação final ficam explícitas para o DP-013.
+- [x] Aprovação documental do DP-012 antes de merge na `main`.
+
+**Aprovação registrada:** plano, matriz de rastreabilidade, catálogo de 79 casos, checklist de 20 controles de segurança e estratégia de execução aprovados documentalmente em 27/10/2026. **Nenhum caso foi executado; todos continuam com status NÃO_EXECUTADO.** O portão DP-013 fará a conferência de consistência do pacote e das validações técnicas/documentais pendentes.
 
 **Próximo card:** DP-013 — Revisar e aprovar a especificação antes de codificar.
 
