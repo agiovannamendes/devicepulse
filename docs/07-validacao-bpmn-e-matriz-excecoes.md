@@ -1,6 +1,6 @@
 # DP-007 — Validação cruzada dos BPMNs e matriz de exceções
 
-**Versão:** 1.0  
+**Versão:** 1.1  
 **Situação:** Aprovado quanto ao conteúdo e à revisão documental  
 **Card:** DP-007  
 **Base:** DP-003 — requisitos, DP-004 — regras de negócio, DP-005 — cadastro/ingestão e DP-006 — alertas (versões aprovadas na `main`).
@@ -30,29 +30,29 @@ A validação deve responder, para cada cenário:
 
 ## 3. Matriz de exceções, responsabilidades e saídas
 
-**Legenda de respostas:** códigos HTTP abaixo são **propostas** (DP-010 definirá o contrato REST). Para processos internos ou programados, a coluna “Resposta” descreve o registro/comportamento, não uma resposta HTTP. Falhas de infraestrutura nos diagramas seguem o caminho genérico **500** já previsto em DP-005/006; códigos específicos como 503 ficam sujeitos à decisão do contrato REST.
+**Legenda de respostas — atualização DP-013:** o contrato **DP-010/OpenAPI 1.0** prevalece para a resposta HTTP: **503** quando a falha é uma indisponibilidade temporária conhecida (ex.: banco inacessível) e **500** para uma falha interna inesperada. Os diagramas históricos DP-005/006 contêm ramos genéricos rotulados 500; devem ser interpretados como erro técnico **sem sucesso falso** e suas legendas visuais precisam ser alinhadas/conferidas no modelador antes de concluir o gate. Para processos internos/programados, a coluna “Resposta” descreve a ação e não uma resposta HTTP.
 
 | ID | Processo / exceção | Responsável | Resposta ou ação prevista | Término e integridade | Rastreio |
 | --- | --- | --- | --- | --- | --- |
 | **EX-01** | Cadastro com campos ausentes/inválidos | API, validação | Rejeitar, HTTP 400 (proposto) | Encerra sem criar dispositivo | RF-001, RF-007; RN-001 |
 | **EX-02** | Identificador de dispositivo já existente | API + banco | Rejeitar, HTTP 409 | Encerra preservando cadastro original | RF-001; RN-001 |
-| **EX-03** | Banco indisponível ao consultar identificador | API | Erro interno proposto 500; registrar falha | Encerra sem confirmar cadastro | RNF-003, RF-020 |
-| **EX-04** | Falha de persistência do cadastro | API + banco | Erro interno proposto 500 | Encerra sem confirmar cadastro; reconsultar antes de eventual reenvio | RF-001, RF-020; RN-001 |
+| **EX-03** | Banco indisponível ao consultar identificador | API | 503 SERVICE_UNAVAILABLE se indisponibilidade conhecida; registrar falha | Encerra sem confirmar cadastro | RNF-003, RF-020 |
+| **EX-04** | Falha de persistência do cadastro | API + banco | 503 se indisponibilidade conhecida; 500 se falha inesperada | Encerra sem confirmar cadastro; reconsultar antes de eventual reenvio | RF-001, RF-020; RN-001 |
 | **EX-05** | Payload ausente, bateria < 0 ou > 100, data inválida/futura | API, validação | Rejeitar HTTP 400, informar campo/causa sem expor detalhes internos | Encerra; não registra evento nem altera estado/alertas | RF-006/007; RN-003/004 |
 | **EX-06** | Evento destinado a dispositivo inexistente | API + banco | Rejeitar HTTP 404 | Encerra sem inserir evento/alerta | RF-006/007; RN-004 |
 | **EX-07** | `eventId` igual com payload idêntico | API + banco | HTTP 200 idempotente | Encerra sem registrar outro evento ou alterar estados | RF-006/008; RN-002/005 |
 | **EX-08** | `eventId` já usado com payload divergente | API + banco | Rejeitar HTTP 409 | Encerra, preservando payload original e estado | RF-006/007; RN-005 |
 | **EX-09** | Evento válido com horário igual/anterior ao último aplicado | Backend + banco | Inserir no histórico; responder 201 (proposto) | Encerra **sem alterar o estado atual ou alertas** | RF-008/010; RN-006 |
-| **EX-10** | Banco indisponível ao localizar dispositivo ou conferir eventId | API + banco | Erro 500 genérico; registrar diagnóstico interno | Encerra sem confirmar processamento | RF-020; RNF-003 |
-| **EX-11** | Banco falha durante gravação de evento | API + banco | Erro 500; não declarar sucesso | Encerra sem confirmar evento; reenviar com o **mesmo** `eventId` após recuperação | RN-005/006; RNF-003 |
-| **EX-12** | Falha durante a avaliação de estado/alerta após o evento | Backend + banco | Erro 500; controlar rollback ou recuperação consistente | Encerra sem sucesso parcial declarado; transação deve impedir histórico/estado divergentes | RF-010/014; RNF-003 |
+| **EX-10** | Banco indisponível ao localizar dispositivo ou conferir eventId | API + banco | 503 se indisponibilidade conhecida; registrar diagnóstico interno | Encerra sem confirmar processamento | RF-020; RNF-003 |
+| **EX-11** | Banco falha durante gravação de evento | API + banco | 503 se indisponibilidade conhecida; 500 se erro inesperado; não declarar sucesso | Encerra sem confirmar evento; reenviar com o **mesmo** `eventId` após recuperação | RN-005/006; RNF-003 |
+| **EX-12** | Falha durante a avaliação de estado/alerta após o evento | Backend + banco | 500 se falha inesperada; 503 se indisponibilidade conhecida; controlar rollback ou recuperação consistente | Encerra sem sucesso parcial declarado; transação deve impedir histórico/estado divergentes | RF-010/014; RNF-003 |
 | **EX-13** | Dispositivo recém-cadastrado e sem eventos | Backend | Manter `SEM_DADOS` / “Aguardando dados” | Encerra avaliação sem alerta | RN-007/014 |
 | **EX-14** | Novo evento mantém bateria baixa ou verificador mantém offline | Motor de alertas | Consultar ocorrência aberta e preservá-la | Encerra sem novo alerta; `openedAt` original preservado | RF-012/013/014; RN-017/018 |
 | **EX-15** | Duas avaliações concorrentes tentam abrir o mesmo alerta | Backend + banco | Restringir único aberto por dispositivo/tipo; operação transacional | Somente um alerta permanece aberto; outro processamento reconhece resultado persistido | RN-018; RNF-003 |
 | **EX-16** | Alerta já resolvido e operador tenta reconhecê-lo | API + backend | Rejeitar HTTP 409 | Encerra sem modificar `acknowledgedAt` | RF-015; RN-019 |
 | **EX-17** | Operador reconhece novamente alerta ainda aberto | API + backend | Responder 200 idempotente | Encerra sem alterar horário anterior | RF-015; RN-019 |
 | **EX-18** | Reconhecimento de alerta inexistente | API | Responder 404 | Encerra sem mudança de dados | RF-015/020 |
-| **EX-19** | Banco indisponível na consulta ou gravação do reconhecimento | API + banco | Responder erro 500; registrar falha | Encerra sem confirmar reconhecimento | RF-015/020; RNF-003 |
+| **EX-19** | Banco indisponível na consulta ou gravação do reconhecimento | API + banco | 503 se indisponibilidade conhecida; 500 se erro inesperado; registrar falha | Encerra sem confirmar reconhecimento | RF-015/020; RNF-003 |
 | **EX-20** | Falha ao consultar/gravar abertura ou resolução de alerta | Motor de alertas + banco | Registrar falha e sinalizar operação não concluída | Encerra a tentativa; exige reconciliação ao restabelecer serviço | RF-014/016; RN-018/020 |
 | **EX-21** | Bateria ou comunicação normaliza sem reconhecimento prévio | Motor de alertas | Registrar `resolvedAt`; manter `acknowledgedAt = null` | Encerra com alerta histórico resolvido | RF-016; RN-019/020/021 |
 | **EX-22** | Perda de comunicação por mais de 300 s | Verificador interno (30 s) | Marcar `OFFLINE` e abrir/manter alerta `NO_COMMUNICATION` | Encerra ciclo sem depender de evento recebido | RF-011/013; RN-008/011/017 |
@@ -145,3 +145,6 @@ Os fluxos modelam respostas de sucesso e de erro, mas **não são executáveis n
 ---
 
 *Documento de projeto independente com equipamentos e eventos simulados. Nenhuma política operacional de empresa externa é presumida.*
+
+
+> **Ressalva do DP-013:** esta atualização esclarece a precedência dos códigos HTTP aprovados, mas **não comprova** importação BPMN.io, inspeção gráfica das setas/gateways nem execução da API. A checagem visual de todos os arquivos BPMN e o alinhamento das legendas originais do XML permanecem obrigatórios antes da decisão de liberação de implementação.

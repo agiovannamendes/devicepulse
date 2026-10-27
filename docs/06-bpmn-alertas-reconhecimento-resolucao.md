@@ -1,6 +1,6 @@
 # DP-006 — BPMN 2.0: Alertas, Reconhecimento e Resolução
 
-**Versão:** 1.1  
+**Versão:** 1.2  
 **Situação:** Revisão técnica aprovada no DP-007  
 **Card:** DP-006  
 **Tipo de processo:** TO-BE (fluxos projetados; dados fictícios)  
@@ -198,4 +198,7 @@ O diagrama A representa **uma avaliação por tipo de alerta**, independentement
 - Os comportamentos aprovados (limite de bateria, timeout, reconhecimento independente da resolução e unicidade de alerta aberto) permanecem inalterados.
 - Consulte [DP-007 — Matriz de exceções](07-validacao-bpmn-e-matriz-excecoes.md) para responsabilidades, respostas e retomada operacional.
 
-**Revisão 1.1 aprovada no DP-007.** A validação visual dos arquivos BPMN no BPMN.io continua pendente para registro antes do portão de aprovação DP-013.
+**Revisão 1.1 aprovada no DP-007; atualização de interpretação documental 1.2 no DP-013.** A validação visual dos arquivos BPMN no BPMN.io continua pendente para registro antes do portão de aprovação DP-013.
+
+
+> **Interpretação dos erros HTTP pelo contrato DP-010 (v1.0):** os exemplos de falhas técnicas dos BPMNs anteriores mostram a resposta genérica `500`, mas o contrato definitivo distingue **503 — indisponibilidade conhecida** (por exemplo, banco temporariamente inacessível) e **500 — erro inesperado**. Em ambos os casos, não declarar sucesso quando a persistência for incerta. Esta nota atualiza a interpretação documental, **não altera o XML BPMN**; as legendas gráficas e sua legibilidade deverão ser conferidas/ajustadas no BPMN.io antes do aceite do DP-013.

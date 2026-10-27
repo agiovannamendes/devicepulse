@@ -1,6 +1,6 @@
 # DP-005 — BPMN 2.0: Cadastro e Ingestão de Eventos
 
-**Versão:** 1.1  
+**Versão:** 1.2  
 **Status:** Revisão técnica aprovada no DP-007  
 **Tipo:** Modelagem TO-BE — processo proposto para o DevicePulse  
 **Card:** DP-005  
@@ -173,4 +173,7 @@ O simulador, o operador e a API **não acessam dispositivos físicos ou serviço
 - Foram disponibilizadas prévias SVG [do cadastro](bpmn/05-cadastro.svg) e [da ingestão](bpmn/05-ingestao.svg) derivadas do layout BPMN DI atualizado.
 - Consulte a [matriz de exceções e validação BPMN](07-validacao-bpmn-e-matriz-excecoes.md) para responsabilidades, términos e política de retomada.
 
-**Revisão 1.1 aprovada no DP-007.** A conferência visual completa em BPMN.io permanece pendente para registro antes do portão de aprovação DP-013.
+**Revisão 1.1 aprovada no DP-007; atualização de interpretação documental 1.2 no DP-013.** A conferência visual completa em BPMN.io permanece pendente para registro antes do portão de aprovação DP-013.
+
+
+> **Interpretação dos erros HTTP pelo contrato DP-010 (v1.0):** os exemplos de falhas técnicas dos BPMNs anteriores mostram a resposta genérica `500`, mas o contrato definitivo distingue **503 — indisponibilidade conhecida** (por exemplo, banco temporariamente inacessível) e **500 — erro inesperado**. Em ambos os casos, não declarar sucesso quando a persistência for incerta. Esta nota atualiza a interpretação documental, **não altera o XML BPMN**; as legendas gráficas e sua legibilidade deverão ser conferidas/ajustadas no BPMN.io antes do aceite do DP-013.

@@ -1,5 +1,5 @@
--- DevicePulse | DP-009 | Modelo fisico PostgreSQL | PROPOSTA v0.1
--- Somente dados ficticios. Este arquivo e referencia de DDL, nao uma migracao aplicada.
+-- DevicePulse | DP-009 | Modelo fisico PostgreSQL aprovado | v1.1
+-- Somente dados ficticios. DDL aprovado documentalmente, nao e migracao aplicada.
 -- UUIDs de dispositivos, eventos e alertas serao gerados no backend/simulador.
 -- Versao exata de PostgreSQL, ferramenta de migracao e ambiente: confirmar antes do desenvolvimento.
 -- Referencias: DP-004 RN-001..RN-023, DP-008 ADR-002 e DP-007.
