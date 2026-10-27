@@ -1,0 +1,15 @@
+flowchart TD
+    A([Operador abre Dispositivos]) --> B["Clicar Novo dispositivo"]
+    B --> C["Informar código e nome"]
+    C --> D{"Campos válidos?"}
+    D -- Não --> E["Exibir erros por campo<br/>Manter valores preenchidos"]
+    E --> C
+    D -- Sim --> F["POST /devices<br/>Mostrar salvando"]
+    F --> G{"Resposta HTTP"}
+    G -- "201" --> H["Confirmar cadastro<br/>Dispositivo inicia SEM_DADOS"]
+    H --> I["Retornar à listagem<br/>Atualizar GET /devices"]
+    G -- "409" --> J["Código já cadastrado<br/>Orientar correção"]
+    J --> C
+    G -- "400" --> E
+    G -- "500/503" --> K["Mensagem sem sucesso falso<br/>Oferecer tentar novamente"]
+    K --> C
