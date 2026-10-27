@@ -1,6 +1,6 @@
 # DP-013 — Matriz de consistência: regra × dados × API × interface × QA
 
-**Versão:** 0.1 — revisão do pacote, não aceite funcional
+**Versão:** 1.0 — documento aprovado para referência; validações técnicas pendentes
 **Fonte contratual:** [OpenAPI 1.0](../api/10-openapi.json); [DER](../09-modelo-dados-e-dicionario.md); [Regras](../04-regras-de-negocio-e-estados.md); [UX](../11-wireframes-fluxos-interfaces.md); [casos de teste](../qa/12-casos-teste.csv).
 
 ## 1. As nove operações REST autorizadas
