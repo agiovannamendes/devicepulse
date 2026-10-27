@@ -31,10 +31,10 @@
 | INV-06 | Evento novo atrasado vai só ao histórico | device_events.occurred_at + devices.last_event_at | 201 HISTORY_ONLY; estado atual imutável | QA-021, QA-022 |
 | INV-07 | Uma ocorrência aberta por tipo/device, mesmo concorrendo | índice parcial ux_alerts_open_device_type | lista sem alertas abertos duplicados | QA-031, QA-032 |
 | INV-08 | Alerta de bateria e de offline podem coexistir | alerts.alert_type + uniques por tipo | telas não misturam duas condições | QA-033, QA-034 |
-| INV-09 | Reconhecer não resolve; resolução não exige reconhecer | alerts.acknowledged_at/resolved_at | POST acknowledge 200 e UI aberta/reconhecida | QA-035..QA-041 |
+| INV-09 | Reconhecer não resolve; resolução não exige reconhecer | alerts.acknowledged_at/resolved_at | POST acknowledge 200 e UI aberta/reconhecida | QA-035..QA-042 |
 | INV-10 | Reconhecimento após resolução bloqueado | UPDATE condicional e check de datas | HTTP 409, ocultar botão após atualizar | QA-039..QA-041 |
-| INV-11 | Falha de DB não retorna sucesso confirmado | transações/rollback e reconciliação | HTTP 503 conhecido, 500 inesperado; UX erro/retry | QA-059..QA-063, QA-077..QA-079 |
-| INV-12 | Dashboard e listas paginadas respondem <=2s no cenário local | índices, paginação, SQL | 100 devices/10 mil events, 1 request por vez | QA-064 |
+| INV-11 | Falha de DB não retorna sucesso confirmado | transações/rollback e reconciliação | HTTP 503 conhecido, 500 inesperado; UX erro/retry | QA-058..QA-062, QA-077..QA-079 |
+| INV-12 | Dashboard e listas paginadas respondem <=2s no cenário local | índices, paginação, SQL | 100 devices/10 mil events, 1 request por vez | QA-063 |
 | INV-13 | Sem segredos nem dados reais e sem escrita pública irrestrita | configuração / controle de rede | demo local primeiro, SEC-01..SEC-20 | QA segurança e SEC |
  
 ## 3. Precedência para divergências históricas
