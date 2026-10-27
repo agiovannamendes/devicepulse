@@ -41,7 +41,7 @@
 
 ## C. Wireframes e acessibilidade — revisão visual do pacote
 
-**Galeria:** [Documento 11](../11-wireframes-fluxos-interfaces.md) e [pasta dos SVGs](../ux/wireframes/).
+**Galeria:** [Documento 11](../11-wireframes-fluxos-interfaces.md) e [exemplo SVG (Visão geral)](../ux/wireframes/11-overview-desktop.svg).
 
 | Tela / estado | Desktop aberto | Mobile aberto | Hierarquia, navegação, estados | Evidência |
 | --- | --- | --- | --- | --- |
