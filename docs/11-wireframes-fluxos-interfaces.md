@@ -1,7 +1,7 @@
 # DP-011 — Wireframes, navegação e especificação das interfaces
 
-**Versão:** 0.1  
-**Situação:** Rascunho para revisão visual e funcional  
+**Versão:** 1.0  
+**Situação:** Aprovado em 27/10/2026 — especificação documental e wireframes  
 **Projeto:** DevicePulse (somente dispositivos e dados fictícios)  
 **Card:** DP-011  
 **Dependências:** [DP-003 — Requisitos](03-requisitos-funcionais-e-nao-funcionais.md) e [DP-010 — Contratos REST/OpenAPI](10-contratos-rest-openapi.md).  
@@ -162,17 +162,19 @@ Os SVGs são representações estáticas de fluxo e hierarquia; **não** certifi
 
 ## 10. Checklist de aceitação DP-011
 
-- [ ] Os sete conjuntos de telas/estados possuem wireframes **desktop e mobile**.
-- [ ] Cadastro, busca, filtros, histórico, alertas e reconhecimento estão cobertos por navegação simples.
-- [ ] Os três arquivos Mermaid descrevem navegação, cadastro e reconhecimento com saídas de erro.
-- [ ] Cada ação possui operação REST correspondente ou é identificada como regra automática interna.
-- [ ] `SEM_DADOS`, `ONLINE`, `OFFLINE` e bateria desatualizada são apresentados corretamente.
-- [ ] Alerta aberto/reconhecido/resolvido não produz interpretação contraditória.
-- [ ] Falhas 400/404/409/500/503 e estados vazios/carregando possuem feedback.
-- [ ] O layout mobile foi representado com barra inferior e cards em coluna.
-- [ ] O documento respeita MVP sem autenticação e sem resolução manual.
+- [x] Os sete conjuntos de telas/estados possuem wireframes **desktop e mobile**.
+- [x] Cadastro, busca, filtros, histórico, alertas e reconhecimento estão cobertos por navegação simples.
+- [x] Os três arquivos Mermaid descrevem navegação, cadastro e reconhecimento com saídas de erro.
+- [x] Cada ação possui operação REST correspondente ou é identificada como regra automática interna.
+- [x] `SEM_DADOS`, `ONLINE`, `OFFLINE` e bateria desatualizada são apresentados corretamente.
+- [x] Alerta aberto/reconhecido/resolvido não produz interpretação contraditória.
+- [x] Falhas 400/404/409/500/503 e estados vazios/carregando possuem feedback.
+- [x] O layout mobile foi representado com barra inferior e cards em coluna.
+- [x] O documento respeita MVP sem autenticação e sem resolução manual.
 - [ ] Conferência visual dos SVGs e revisão de critérios de UX pela responsável.
-- [ ] Aprovação do DP-011 antes de merge na `main`.
+- [x] Aprovação do DP-011 antes de merge na `main`.
+
+**Aprovação registrada:** a responsável aprovou os wireframes, fluxos e especificação do DP-011 em 27/10/2026. A revisão visual independente dos SVGs em navegadores e a validação de responsividade real em 360 px **não foram executadas nesta etapa**; permanecem como evidências a validar no DP-013 e durante a implementação. A aprovação não significa que a interface React já exista.
 
 **Próxima etapa:** DP-012 — Plano de testes e critérios de aceite.
 
