@@ -1,6 +1,6 @@
 # DP-012 — Checklist de segurança e privacidade
 
-**Versão:** 0.1 — plano de verificação (nenhum controle validado em execução)  
+**Versão:** 1.0 — planejamento aprovado em 27/10/2026 (controles ainda não executados)  
 **Ambiente-alvo:** desenvolvimento local e eventual demonstração pública condicionada à revisão de segurança.  
 **Referências:** DP-003 RNF-001/002/003/012; DP-008 ADR-005; DP-010 REST/OpenAPI; DP-009 DER.
 
