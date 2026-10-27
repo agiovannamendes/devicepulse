@@ -1,7 +1,7 @@
 # DP-013 — Registro de ajustes e decisões da auditoria
 
-**Versão:** 0.1 — histórico proposto para revisão  
-**Status do gate:** ainda não aprovado; esta PR não libera implementação.
+**Versão:** 1.0 — documento aprovado para referência; validações técnicas pendentes
+**Status do gate:** relatório de auditoria aprovado em 27/10/2026; **GO não concedido** enquanto as evidências obrigatórias estiverem pendentes.
 
 ## 1. Ajustes produzidos no DP-013
 
