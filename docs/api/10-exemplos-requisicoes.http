@@ -1,0 +1,96 @@
+# DevicePulse — DP-010 | Exemplos de requisições HTTP (somente dados fictícios)
+# Arquivo para revisão do contrato. NÃO existe API em execução nesta etapa.
+# Abrir em um cliente HTTP com suporte a variáveis (ex.: REST Client).
+# Trocar os UUIDs abaixo após cadastrar os recursos no banco local.
+@baseUrl = http://localhost:3000/api/v1
+@deviceId = 383f7ac3-55f4-4891-8fa6-88253ce7b42c
+@eventId = 7a4c4e36-88c9-4059-aa65-9b1e0b88b4be
+@alertId = a15bef2e-41e2-44e0-ac70-d334f3ef7a3c
+
+### 1. Cadastrar dispositivo (201 ou 409 para code duplicado)
+POST {{baseUrl}}/devices
+Content-Type: application/json
+
+{
+  "code": "SENSOR_001",
+  "name": "Sensor de demonstração 01"
+}
+
+### 2. Listagem (200; inclui filtro, busca e paginação)
+GET {{baseUrl}}/devices?q=SENSOR&connectivityStatus=ONLINE&page=1&pageSize=20
+
+### 3. Detalhe de dispositivo (200/404)
+GET {{baseUrl}}/devices/{{deviceId}}
+
+### 4. Simulador — evento fictício (201 APPLIED ou HISTORY_ONLY)
+# O horário deve ser <= ao relógio do backend. Atualizar para instante válido ao executar.
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "{{eventId}}",
+  "deviceId": "{{deviceId}}",
+  "occurredAt": "2026-10-26T14:00:00-03:00",
+  "batteryLevel": 15
+}
+
+### 5. Reenvio EXATAMENTE igual ao anterior (200 ALREADY_PROCESSED)
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "{{eventId}}",
+  "deviceId": "{{deviceId}}",
+  "occurredAt": "2026-10-26T14:00:00-03:00",
+  "batteryLevel": 15
+}
+
+### 6. eventId repetido e conteúdo diferente (409 EVENT_ID_CONFLICT)
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "{{eventId}}",
+  "deviceId": "{{deviceId}}",
+  "occurredAt": "2026-10-26T14:00:00-03:00",
+  "batteryLevel": 55
+}
+
+### 7. Payload inválido (400 VALIDATION_ERROR)
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "2c70b28a-5932-44c6-b5cc-529d92475e31",
+  "deviceId": "{{deviceId}}",
+  "occurredAt": "2026-10-26T14:01:00-03:00",
+  "batteryLevel": 101
+}
+
+### 8. Histórico paginado de dispositivo (200/404)
+GET {{baseUrl}}/devices/{{deviceId}}/events?page=1&pageSize=20
+
+### 9. Alertas abertos ainda sem reconhecimento (200)
+GET {{baseUrl}}/alerts?status=OPEN&acknowledged=false&page=1&pageSize=20
+
+### 10. Alertas por tipo e dispositivo (200)
+GET {{baseUrl}}/alerts?alertType=LOW_BATTERY&deviceId={{deviceId}}&page=1&pageSize=20
+
+### 11. Detalhes de um alerta (200/404)
+GET {{baseUrl}}/alerts/{{alertId}}
+
+### 12. Reconhecer um alerta aberto (200; sem corpo)
+POST {{baseUrl}}/alerts/{{alertId}}/acknowledge
+
+### 13. Repetição do reconhecimento enquanto ABERTO (200 sem mudar acknowledgedAt)
+POST {{baseUrl}}/alerts/{{alertId}}/acknowledge
+
+### 14. Resumo dos indicadores (200)
+GET {{baseUrl}}/dashboard/summary
+
+### 15. Consulta inválida (400 VALIDATION_ERROR)
+GET {{baseUrl}}/devices?page=1&pageSize=101
+
+# Sem operação DELETE/PATCH de resolução: alertas se resolvem automaticamente.
+# Para simular offline, pausar os eventos do dispositivo; o backend verifica a cada 30 s.
+# Banco indisponível: 503 SERVICE_UNAVAILABLE; falha inesperada: 500 INTERNAL_ERROR.
