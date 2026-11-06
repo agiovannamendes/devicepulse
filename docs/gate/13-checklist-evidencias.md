@@ -85,3 +85,18 @@
 | Liberação formal DP-014 | **NÃO** |
 
 > **Regra:** só atualizar a tabela depois de executar, inspecionar e registrar a evidência. Não declarar “aprovado”, “congelado” ou “implementação liberada” a partir de um checklist preenchido hipoteticamente.
+
+
+## F. Conferência estrutural em lote — 05/11/2026
+
+Esta conferência foi feita diretamente sobre os arquivos versionados na `main`, por leitura e análise automática dos conteúdos — **sem abrir BPMN.io, Swagger Editor ou navegador gráfico**.
+
+| Conjunto | Evidência estrutural | Resultado | Alcance |
+| --- | --- | --- | --- |
+| Cinco BPMNs XML | Unicidade de IDs; `sourceRef`/`targetRef` e `bpmnElement` apontando para IDs presentes | **5/5 sem erro encontrado nessas verificações** | Não garante importação ou qualidade visual |
+| Wireframes | Presença do elemento SVG, `viewBox` previsto e fechamento do SVG | **14/14 sem erro encontrado nessas verificações** | Não verifica tipografia, corte, sobreposição, acessibilidade ou 360 px |
+| OpenAPI 3.1 | JSON legível; `3.1.0`, `info.version=1.0.0`, 9 operações, 16 schemas, 72 ocorrências de `$ref` resolvidas internamente e sem `operationId` repetido | **Sem erro encontrado nessas verificações** | Não substitui validador externo independente ou testes HTTP |
+
+**Validações que continuam pendentes:** evidência de importação e inspeção gráfica dos cinco BPMNs no modelador, ajuste das legendas 500/503 nos diagramas, conferência visual dos 14 wireframes e validação independente do OpenAPI. Essas pendências não são promovidas a "PASSOU" pela auditoria automatizada.
+
+**Efeito sobre a decisão:** o gate continua **NO-GO temporário** até registrar as verificações restantes e o aceite explícito de liberação da implementação.
