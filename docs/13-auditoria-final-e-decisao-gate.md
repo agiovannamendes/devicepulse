@@ -1,11 +1,32 @@
 # DP-013 — Relatório de auditoria final e decisão do portão
 
-**Versão:** 1.0 (relatório de auditoria aprovado; pendências do gate em aberto)  
-**Situação:** **Relatório aprovado em 27/10/2026; gate NO-GO temporário / implementação não liberada**  
+**Versão:** 1.1 — adendo de encerramento e liberação controlada do setup  
+**Situação:** **GO controlado para iniciar DP-014 em 05/11/2026; evidências externas residuais rastreadas**  
 **Data de referência:** 27/10/2026  
 **Projeto:** DevicePulse — portfólio Full Stack com dispositivos e eventos exclusivamente fictícios  
 **Card:** DP-013  
 **PR:** #13 — alterações documentais aprovadas para integração à `main`; a aprovação do relatório não encerra os bloqueios técnicos do gate.
+
+## 0. Adendo de decisão — 05/11/2026
+
+**Decisão atual:** **GO CONTROLADO PARA DP-014 (SETUP LOCAL)**. A responsável confirmou no acompanhamento do projeto que as revisões estavam satisfatórias e solicitou avançar para a próxima tarefa. Este aceite permite **iniciar a preparação do monorepo e do ambiente local**, com o escopo do MVP congelado segundo DP-004, DP-009, DP-010, DP-011 e DP-012. Ele **não** constitui atestado independente de conformidade do OpenAPI, de funcionamento da interface nem de execução dos 79 testes de QA.
+
+**Evidências técnicas efetivamente presentes:**
+- Cinco arquivos BPMN examinados quanto a IDs, conexões e referências; não apareceram falhas estruturais nessas verificações.
+- Rótulos antigos `500` dos processos de ingestão e reconhecimento foram alinhados ao contrato como `500/503` nos XMLs `.bpmn` e prévias `.svg`, sem alterar regras de negócio. Os quatro arquivos foram conferidos estruturalmente após a alteração.
+- OpenAPI 3.1.0 v1.0.0: nove operações, 16 schemas, 72 referências `$ref` resolvidas localmente, IDs de operação sem duplicações.
+- 14 SVGs de wireframe com estrutura e dimensões previstas.
+- Aceite geral da responsável **declarado em conversa**. **Não há prints ou relatórios anexados de importação BPMN.io, validação independente no Swagger Editor nem inspeção visual dos 14 wireframes.** Esses itens não devem ser reportados como resultados técnicos independentemente validados.
+
+**Pendências residuais com proprietário e marco:**
+1. **OpenAPI independente:** anexar relatório de validador compatível com 3.1, antes de aprovar código dos endpoints no DP-016/017 (não bloqueia criar pastas nem instalar dependências no DP-014).
+2. **BPMN pós-ajuste:** conferir importação visual dos dois XMLs cujos rótulos foram alterados, antes de dar aceite às implementações relacionadas (DP-019 e DP-022). A confirmação geral anterior é um aceite de projeto, não evidência dessa revisão após a edição.
+3. **UI e acessibilidade:** validar os protótipos e testar viewport 360 px, navegação por teclado e feedback durante DP-026/031 (não há React executável ainda).
+4. **Banco/QA reais:** executar migrações, testes e verificação de segurança nos cards técnicos previstos; nenhum teste foi marcado como PASSOU.
+
+**Condição de liberação:** o DP-014 pode começar **em computador pessoal**, conforme a política definida com a responsável. Não abrir escopo novo, não publicar endpoint de escrita na internet sem proteção e não aprovar PR funcional quando suas dependências de validação ainda estiverem pendentes. O registro anterior de **NO-GO** abaixo permanece apenas como histórico anterior a este adendo, não como status atual.
+
+---
 
 ## 1. Objeto e resultado da auditoria
 
@@ -125,7 +146,7 @@ Existem 24 cards DP-014..DP-037 no backlog de desenvolvimento. As três primeira
 | Testes, segurança e reprodutibilidade planejados | DP-012 aprovado; execução futura discriminada | **CONFERIDO** |
 | Assinatura/aceite da responsável | Aprovação explícita para **liberar programação** | **PENDENTE (aprovação do relatório registrada, GO não concedido)** |
 
-## 7. Decisão do gate após aprovação do relatório
+## 7. Decisão provisória anterior (histórico de auditoria, superada pelo adendo de 05/11/2026)
 
 <escape>**DECISÃO DO GATE: NO-GO TEMPORÁRIO — NÃO LIBERAR IMPLEMENTAÇÃO.**</escape>
 

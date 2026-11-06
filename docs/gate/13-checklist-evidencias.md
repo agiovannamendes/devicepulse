@@ -100,3 +100,14 @@ Esta conferência foi feita diretamente sobre os arquivos versionados na `main`,
 **Validações que continuam pendentes:** evidência de importação e inspeção gráfica dos cinco BPMNs no modelador, ajuste das legendas 500/503 nos diagramas, conferência visual dos 14 wireframes e validação independente do OpenAPI. Essas pendências não são promovidas a "PASSOU" pela auditoria automatizada.
 
 **Efeito sobre a decisão:** o gate continua **NO-GO temporário** até registrar as verificações restantes e o aceite explícito de liberação da implementação.
+
+
+## G. Fechamento de auditoria e aceite da responsável — 05/11/2026
+
+**Aceite de projeto declarado:** a responsável confirmou que as revisões estavam satisfatórias e solicitou passar ao card seguinte. Foi registrado **GO controlado para DP-014**, limitado ao setup local. A autorização **não equivale** a teste funcional ou certificação técnica.
+
+**G-02 ajustado documentalmente e nos desenhos:** `05-ingestao.bpmn`, `06-reconhecimento-alertas.bpmn` e suas duas prévias SVG agora exibem falhas genéricas com `500/503`. Após editar os arquivos, foram reconferidos IDs/referências e o fechamento das prévias SVG. **A importação BPMN.io desses arquivos *após a edição* ainda carece de evidência**, devendo ser registrada antes do aceite da implementação correspondente.
+
+**Revisões não demonstradas por artefato externo:** validação independente do OpenAPI e inspeção visual completa dos wireframes. O projeto possui verificações estruturais e aceite informado pela responsável, mas **nenhum relatório externo foi anexado**. Para evitar duplicidade, essas verificações foram atribuídas aos cards técnicos seguintes: API em DP-016/017; BPMN de ingestão/alertas em DP-019/022; UX em DP-026/031.
+
+**Decisão completa, limites e responsáveis:** [Documento 13 v1.1](../13-auditoria-final-e-decisao-gate.md).
