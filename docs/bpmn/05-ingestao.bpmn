@@ -22,8 +22,8 @@
     <bpmn:endEvent id="End_409" name="Conflito (409)"><bpmn:incoming>Flow_Ing_15</bpmn:incoming></bpmn:endEvent>
     <bpmn:serviceTask id="Task_PersistirEvento" name="Gravar evento e recebimento"><bpmn:incoming>Flow_Ing_16</bpmn:incoming><bpmn:outgoing>Flow_Ing_17</bpmn:outgoing></bpmn:serviceTask>
     <bpmn:boundaryEvent id="Boundary_ErroPersistenciaEvento" name="Falha de persistência" attachedToRef="Task_PersistirEvento" cancelActivity="true"><bpmn:outgoing>Flow_Ing_18</bpmn:outgoing><bpmn:errorEventDefinition id="ErrorEvt_Boundary_ErroPersistenciaEvento" errorRef="Error_ingestao"/></bpmn:boundaryEvent>
-    <bpmn:sendTask id="Task_Resp500" name="Responder: falha interna"><bpmn:incoming>Flow_DP007_DB_Task_AvaliarEstado</bpmn:incoming><bpmn:incoming>Flow_DP007_DB_Task_ConferirEventId</bpmn:incoming><bpmn:incoming>Flow_DP007_DB_Task_LocalizarDispositivo</bpmn:incoming><bpmn:incoming>Flow_Ing_18</bpmn:incoming><bpmn:outgoing>Flow_Ing_19</bpmn:outgoing></bpmn:sendTask>
-    <bpmn:endEvent id="End_500" name="Falha (500)"><bpmn:incoming>Flow_Ing_19</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sendTask id="Task_Resp500" name="Responder: erro (500/503)"><bpmn:incoming>Flow_DP007_DB_Task_AvaliarEstado</bpmn:incoming><bpmn:incoming>Flow_DP007_DB_Task_ConferirEventId</bpmn:incoming><bpmn:incoming>Flow_DP007_DB_Task_LocalizarDispositivo</bpmn:incoming><bpmn:incoming>Flow_Ing_18</bpmn:incoming><bpmn:outgoing>Flow_Ing_19</bpmn:outgoing></bpmn:sendTask>
+    <bpmn:endEvent id="End_500" name="Erro (500/503)"><bpmn:incoming>Flow_Ing_19</bpmn:incoming></bpmn:endEvent>
     <bpmn:exclusiveGateway id="Gateway_EventoMaisRecente" name="Mais recente?"><bpmn:incoming>Flow_Ing_17</bpmn:incoming><bpmn:outgoing>Flow_Ing_20</bpmn:outgoing><bpmn:outgoing>Flow_Ing_22</bpmn:outgoing></bpmn:exclusiveGateway>
     <bpmn:sendTask id="Task_Resp201Historico" name="Responder: registrado no histórico"><bpmn:incoming>Flow_Ing_20</bpmn:incoming><bpmn:outgoing>Flow_Ing_21</bpmn:outgoing></bpmn:sendTask>
     <bpmn:endEvent id="End_201Historico" name="Histórico preservado (201)"><bpmn:incoming>Flow_Ing_21</bpmn:incoming></bpmn:endEvent>
